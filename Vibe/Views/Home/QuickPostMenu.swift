@@ -2,87 +2,95 @@
 //  QuickPostMenu.swift
 //  Vibe
 //
-//  快速发布菜单 — 底部上划面板
+//  快速发布菜单 — 底部上划面板，基于设计稿 04.md
 //
 
 import SwiftUI
 
 struct QuickPostMenu: View {
-    @Environment(\.dismiss) var dismiss
+    @Binding var isPresented: Bool
+    @Binding var selectedType: RecordType?
 
     var body: some View {
-        ZStack {
-            Color.vibeIndigo.opacity(0.3)
-                .ignoresSafeArea()
-
-            VStack(spacing: 24) {
-                // 拖拽指示器
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(Color.white.opacity(0.3))
-                    .frame(width: 40, height: 5)
-                    .padding(.top, 12)
-
-                Text("发布")
-                    .font(.vibeSubtitle)
-                    .foregroundColor(.white)
-
-                // 类型选择
-                HStack(spacing: 16) {
-                    postOption(.text, label: "文字", icon: "text.bubble.fill")
-                    postOption(.image, label: "图片", icon: "photo.fill")
-                    postOption(.video, label: "视频", icon: "play.rectangle.fill")
-                }
-
-                HStack(spacing: 16) {
-                    postOption(.audio, label: "音频", icon: "waveform")
-                    postOption(.link, label: "链接", icon: "link")
-                }
-
-                Spacer()
+        ZStack(alignment: .bottom) {
+            // 遮罩层
+            if isPresented {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                    .onTapGesture { dismiss() }
             }
-            .padding(.bottom, 34)
-        }
-    }
 
-    private func postOption(_ type: RecordType, label: String, icon: String) -> some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 28))
-                .foregroundColor(.white)
-                .frame(width: 64, height: 64)
+            // 弹出面板
+            if isPresented {
+                VStack(spacing: 0) {
+                    // 拖拽指示器
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.white.opacity(0.2))
+                        .frame(width: 48, height: 6)
+                        .padding(.top, 16)
+                        .padding(.bottom, 20)
+
+                    Text("发布新内容")
+                        .font(.vibeSubtitle)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 28)
+
+                    // 2×2 网格
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
+                        postOption(.text, label: "发布文字", icon: "text.bubble.fill", color: .vibeIndigo)
+                        postOption(.image, label: "发布图片", icon: "photo.fill", color: Color(hex: "f43f5e"))
+                        postOption(.video, label: "发布视频", icon: "play.rectangle.fill", color: Color(hex: "f59e0b"))
+                        postOption(.audio, label: "发布音频", icon: "waveform", color: .vibeCyan)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 40)
+                }
                 .background(Color.vibeCardBg)
                 .background(.ultraThinMaterial)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 40)
                         .stroke(Color.vibeCardBorder, lineWidth: 1)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-
-            Text(label)
-                .font(.vibeCaption)
-                .foregroundColor(.vibeTextSecondary)
+                .clipShape(RoundedRectangle(cornerRadius: 40))
+                .padding(.horizontal, 16)
+                .padding(.bottom, 34)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
-        .buttonStyle(ScaleButtonStyle())
-        .onTapGesture {
-            // TODO: 导航到 CreateRecordView
-            dismiss()
-        }
+        .animation(.spring(response: 0.45, dampingFraction: 0.8), value: isPresented)
     }
-}
 
-// MARK: - 浮动发布按钮
-struct FloatingPostButton: View {
-    var body: some View {
+    private func dismiss() {
+        isPresented = false
+    }
+
+    private func postOption(_ type: RecordType, label: String, icon: String, color: Color) -> some View {
         Button {
-            // TODO: 触发 QuickPostMenu
+            selectedType = type
+            dismiss()
         } label: {
-            Image(systemName: "plus")
-                .font(.system(size: 28, weight: .bold))
-                .foregroundColor(.vibeIndigo)
-                .frame(width: 56, height: 56)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: .black.opacity(0.3), radius: 16, y: 8)
+            VStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
+                    .frame(width: 48, height: 48)
+                    .background(color)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .shadow(color: color.opacity(0.4), radius: 6, y: 3)
+
+                Text(label)
+                    .font(.vibeBodySmall)
+                    .foregroundColor(.white)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
+            .background(Color.white.opacity(0.1))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 24))
         }
         .buttonStyle(ScaleButtonStyle())
     }

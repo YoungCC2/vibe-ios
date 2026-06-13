@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct CreateRecordView: View {
-    @State private var selectedType: RecordType = .text
+    @State private var selectedType: RecordType
+
+    init(initialType: RecordType = .text) {
+        _selectedType = State(initialValue: initialType)
+    }
     @State private var content = ""
     @State private var tags: [String] = []
     @State private var tagInput = ""

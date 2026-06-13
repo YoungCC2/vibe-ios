@@ -2,59 +2,45 @@
 //  HomeView.swift
 //  Vibe
 //
-//  首页时间线 — 基于设计稿 01
+//  首页时间线
 //
 
 import SwiftUI
 
 struct HomeView: View {
     @StateObject private var vm = HomeViewModel()
-    @State private var showQuickMenu = false
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            // 时间线列表
-            ScrollView {
-                LazyVStack(spacing: 16) {
-                    if vm.records.isEmpty && !vm.isLoading {
-                        EmptyStateView()
-                            .padding(.top, 80)
-                    }
-
-                    ForEach(vm.records) { record in
-                        RecordCardView(record: record)
-                            .onAppear {
-                                if record.id == vm.records.last?.id {
-                                    Task { await vm.loadMore() }
-                                }
-                            }
-                    }
-
-                    if vm.isLoading {
-                        ProgressView()
-                            .tint(.white)
-                            .padding(.vertical, 24)
-                    }
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                if vm.records.isEmpty && !vm.isLoading {
+                    EmptyStateView()
+                        .padding(.top, 80)
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 120) // 给底部导航 + FAB 留空间
-            }
-            .refreshable {
-                await vm.refresh()
-            }
 
-            // 浮动发布按钮
-            FloatingPostButton()
-                .padding(.trailing, 24)
-                .padding(.bottom, 100)
+                ForEach(vm.records) { record in
+                    RecordCardView(record: record)
+                        .onAppear {
+                            if record.id == vm.records.last?.id {
+                                Task { await vm.loadMore() }
+                            }
+                        }
+                }
+
+                if vm.isLoading {
+                    ProgressView()
+                        .tint(.white)
+                        .padding(.vertical, 24)
+                }
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 140)
+        }
+        .refreshable {
+            await vm.refresh()
         }
         .task {
             if vm.records.isEmpty { await vm.load() }
-        }
-        .sheet(isPresented: $showQuickMenu) {
-            QuickPostMenu()
-                .presentationDetents([.height(280)])
-                .presentationBackground(.clear)
         }
     }
 }

@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  Vibe
 //
-//  根视图 — 底部 3 Tab + 搜索
+//  根视图 — 底部 3 Tab + HeaderBar + 浮动发布键 + QuickPostMenu
 //
 
 import SwiftUI
@@ -10,6 +10,9 @@ import SwiftUI
 struct ContentView: View {
     @State private var selectedTab: Tab = .home
     @State private var showSearch = false
+    @State private var showQuickMenu = false
+    @State private var quickMenuType: RecordType?
+    @State private var showCreate = false
     let authService: AuthService
 
     enum Tab: String, CaseIterable {
@@ -23,44 +26,44 @@ struct ContentView: View {
             VibeBackground()
 
             VStack(spacing: 0) {
-                // 顶部搜索栏
-                HStack {
-                    Text("Vibe")
-                        .font(.vibeTitle)
-                        .foregroundColor(.white)
-
-                    Spacer()
-
-                    Button {
-                        showSearch.toggle()
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 20))
-                            .foregroundColor(.white)
-                            .frame(width: 40, height: 40)
-                            .background(Color.vibeNavBg)
-                            .clipShape(Circle())
-                    }
+                // 顶部 HeaderBar
+                HeaderBar {
+                    showSearch = true
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 12)
 
                 // 页面内容
-                Group {
-                    switch selectedTab {
-                    case .home:
-                        HomeView()
-                    case .discover:
-                        NavigationStack { DiscoverView() }
-                    case .profile:
-                        ScrollView {
-                            ProfileView(authService: authService)
+                ZStack(alignment: .bottomTrailing) {
+                    Group {
+                        switch selectedTab {
+                        case .home:
+                            HomeView()
+                        case .discover:
+                            NavigationStack { DiscoverView() }
+                        case .profile:
+                            ScrollView {
+                                ProfileView(authService: authService)
+                            }
                         }
                     }
+
+                    // 浮动发布按钮（设计稿：白色圆角 + 加号）
+                    Button {
+                        showQuickMenu = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.vibeIndigo)
+                            .frame(width: 56, height: 56)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                    .padding(.trailing, 24)
+                    .padding(.bottom, 100)
                 }
 
-                // 底部导航栏
+                // 底部导航栏（毛玻璃圆角）
                 HStack {
                     ForEach(Tab.allCases, id: \.self) { tab in
                         Button {
@@ -93,17 +96,33 @@ struct ContentView: View {
                 .shadow(color: .black.opacity(0.3), radius: 16, y: -4)
             }
         }
+        // QuickPostMenu 遮罩
+        .overlay {
+            QuickPostMenu(isPresented: $showQuickMenu, selectedType: $quickMenuType)
+        }
+        .onChange(of: quickMenuType) { _, type in
+            if type != nil {
+                showCreate = true
+            }
+        }
         .sheet(isPresented: $showSearch) {
             SearchView()
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showCreate) {
+            CreateRecordView(initialType: quickMenuType ?? .text)
                 .presentationDragIndicator(.visible)
         }
     }
 
     private func iconFor(_ tab: Tab) -> String {
         switch tab {
-        case .home:     return "house.fill"
-        case .discover: return "compass"
-        case .profile:  return "person.fill"
+        case .home:
+            return selectedTab == .home ? "house.fill" : "house"
+        case .discover:
+            return selectedTab == .discover ? "compass.fill" : "compass"
+        case .profile:
+            return selectedTab == .profile ? "person.fill" : "person"
         }
     }
 }
