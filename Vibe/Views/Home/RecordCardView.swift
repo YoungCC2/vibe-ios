@@ -145,24 +145,46 @@ struct SingleImageView: View {
     }
 }
 
-// MARK: - 多图画廊
+// MARK: - 多图横滑浏览（4:5 比例 + 分页指示器）
 struct ImageGalleryView: View {
     let media: [MediaItem]
+    @State private var currentIndex: Int = 0
     @State private var selectedIndex: Int?
 
     var body: some View {
-        let columns = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
-        LazyVGrid(columns: columns, spacing: 8) {
-            ForEach(Array(media.enumerated()), id: \.element.id) { idx, m in
-                AsyncImage(url: m.displayURL) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Color.vibeInputBg
+        VStack(spacing: 12) {
+            // 4:5 横滑容器
+            Rectangle()
+                .fill(Color.vibeInputBg)
+                .aspectRatio(4.0/5.0, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
+                .overlay {
+                    TabView(selection: $currentIndex) {
+                        ForEach(Array(media.enumerated()), id: \.element.id) { idx, m in
+                            AsyncImage(url: m.displayURL) { image in
+                                image.resizable().scaledToFill()
+                            } placeholder: {
+                                Color.vibeInputBg
+                            }
+                            .clipped()
+                            .tag(idx)
+                            .onTapGesture { selectedIndex = idx }
+                        }
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
                 }
-                .frame(height: 160)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .onTapGesture { selectedIndex = idx }
+
+            // 分页指示器（小圆点）
+            if media.count > 1 {
+                HStack(spacing: 6) {
+                    ForEach(0..<media.count, id: \.self) { idx in
+                        Circle()
+                            .fill(idx == currentIndex ? Color.white : Color.white.opacity(0.3))
+                            .frame(width: 6, height: 6)
+                    }
+                }
             }
         }
         .fullScreenCover(item: Binding(
