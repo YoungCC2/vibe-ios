@@ -8,6 +8,7 @@
 
 import SwiftUI
 import AVKit
+import Combine
 
 struct RecordCardView: View {
     let record: Record
@@ -295,6 +296,7 @@ struct AudioPlayerBar: View {
     @State private var currentTime: Double = 0
     @State private var duration: Double = 0
     @State private var timeObserver: Any?
+    @State private var cancellables = Set<AnyCancellable>()
 
     var body: some View {
         HStack(spacing: 14) {
@@ -342,6 +344,10 @@ struct AudioPlayerBar: View {
             player?.pause()
             isPlaying = false
         } else {
+            // 配置音频会话为播放模式
+            try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try? AVAudioSession.sharedInstance().setActive(true)
+
             if player == nil, let url = URL(string: media.url) {
                 player = AVPlayer(url: url)
                 setupObserver()
@@ -353,7 +359,24 @@ struct AudioPlayerBar: View {
 
     private func setupObserver() {
         guard let player else { return }
-        duration = CMTimeGetSeconds(player.currentItem?.duration ?? .zero)
+        // duration 异步加载，用通知监听
+        if let item = player.currentItem {
+            // 先尝试直接拿
+            let d = CMTimeGetSeconds(item.duration)
+            if d > 0 && !d.isNaN {
+                duration = d
+            }
+            // 监听 item 加载完成
+            item.publisher(for: \.duration)
+                .receive(on: DispatchQueue.main)
+                .sink { time in
+                    let d = CMTimeGetSeconds(time)
+                    if d > 0 && !d.isNaN {
+                        self.duration = d
+                    }
+                }
+                .store(in: &cancellables)
+        }
         timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 600), queue: .main) { time in
             currentTime = CMTimeGetSeconds(time)
             if currentTime >= duration && duration > 0 {
