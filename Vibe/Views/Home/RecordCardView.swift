@@ -128,8 +128,9 @@ struct SingleImageView: View {
                     .overlay(ProgressView().tint(.white))
             }
         }
+        .aspectRatio(4.0/5.0, contentMode: .fill)
         .frame(maxWidth: .infinity)
-        .aspectRatio(4.0/5.0, contentMode: .fit)
+        .clipped()
         .clipShape(RoundedRectangle(cornerRadius: 24))
         .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
         .onTapGesture { showFullscreen = true }
@@ -236,8 +237,8 @@ struct VideoThumbnailView: View {
                     Color.vibeInputBg.overlay(ProgressView().tint(.white))
                 }
             }
+            .aspectRatio(4.0/5.0, contentMode: .fill)
             .frame(maxWidth: .infinity)
-            .aspectRatio(4.0/5.0, contentMode: .fit)
             .clipped()
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
