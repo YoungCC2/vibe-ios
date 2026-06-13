@@ -114,29 +114,33 @@ struct SingleImageView: View {
     @State private var showFullscreen = false
 
     var body: some View {
-        AsyncImage(url: media.displayURL) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure:
-                Color.vibeInputBg
-                    .overlay(Image(systemName: "photo").foregroundColor(.vibeTextTertiary))
-            default:
-                Color.vibeInputBg
-                    .overlay(ProgressView().tint(.white))
+        // 先用 Rectangle 占位固定 4:5 容器，再 overlay 图片
+        Rectangle()
+            .fill(Color.vibeInputBg)
+            .aspectRatio(4.0/5.0, contentMode: .fit)
+            .overlay {
+                AsyncImage(url: media.displayURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        Color.vibeInputBg
+                            .overlay(Image(systemName: "photo").foregroundColor(.vibeTextTertiary))
+                    default:
+                        Color.vibeInputBg
+                            .overlay(ProgressView().tint(.white))
+                    }
+                }
+                .clipped()
             }
-        }
-        .aspectRatio(4.0/5.0, contentMode: .fill)
-        .frame(maxWidth: .infinity)
-        .clipped()
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
-        .onTapGesture { showFullscreen = true }
-        .fullScreenCover(isPresented: $showFullscreen) {
-            FullscreenImageViewer(media: [media], startIndex: 0)
-        }
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
+            .onTapGesture { showFullscreen = true }
+            .fullScreenCover(isPresented: $showFullscreen) {
+                FullscreenImageViewer(media: [media], startIndex: 0)
+            }
     }
 }
 
@@ -227,24 +231,29 @@ struct VideoThumbnailView: View {
 
     var body: some View {
         ZStack {
-            AsyncImage(url: media.displayURL) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFill()
-                case .failure:
-                    Color.vibeInputBg
-                default:
-                    Color.vibeInputBg.overlay(ProgressView().tint(.white))
+            // 4:5 容器
+            Rectangle()
+                .fill(Color.vibeInputBg)
+                .aspectRatio(4.0/5.0, contentMode: .fit)
+                .overlay {
+                    AsyncImage(url: media.displayURL) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFill()
+                        case .failure:
+                            Color.vibeInputBg
+                        default:
+                            Color.vibeInputBg.overlay(ProgressView().tint(.white))
+                        }
+                    }
+                    .clipped()
                 }
-            }
-            .aspectRatio(4.0/5.0, contentMode: .fill)
-            .frame(maxWidth: .infinity)
-            .clipped()
-            .clipShape(RoundedRectangle(cornerRadius: 24))
-            .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
+                .allowsHitTesting(false)
 
-            // 渐变遮罩（设计稿：bg-gradient-to-t from-black/40 via-transparent to-transparent）
-            RoundedRectangle(cornerRadius: 24)
+            // 渐变遮罩
+            Rectangle()
                 .fill(
                     LinearGradient(
                         colors: [.black.opacity(0.4), .clear, .clear],
