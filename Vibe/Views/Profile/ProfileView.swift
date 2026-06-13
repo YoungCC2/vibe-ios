@@ -128,7 +128,7 @@ struct ProfileView: View {
                             LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                                 ForEach(mediaRecords.prefix(6)) { record in
                                     if let media = record.media.first {
-                                        AsyncImage(url: URL(string: media.thumbnailURL ?? media.url)) { image in
+                                        AsyncImage(url: media.displayURL) { image in
                                             image.resizable().scaledToFill()
                                         } placeholder: {
                                             Color.vibeInputBg

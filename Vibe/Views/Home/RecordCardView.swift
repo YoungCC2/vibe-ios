@@ -114,7 +114,7 @@ struct SingleImageView: View {
     @State private var showFullscreen = false
 
     var body: some View {
-        AsyncImage(url: URL(string: media.thumbnailURL ?? media.url)) { phase in
+        AsyncImage(url: media.displayURL) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -148,7 +148,7 @@ struct ImageGalleryView: View {
         let columns = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
         LazyVGrid(columns: columns, spacing: 8) {
             ForEach(Array(media.enumerated()), id: \.element.id) { idx, m in
-                AsyncImage(url: URL(string: m.thumbnailURL ?? m.url)) { image in
+                AsyncImage(url: m.displayURL) { image in
                     image.resizable().scaledToFill()
                 } placeholder: {
                     Color.vibeInputBg
@@ -226,7 +226,7 @@ struct VideoThumbnailView: View {
 
     var body: some View {
         ZStack {
-            AsyncImage(url: URL(string: media.thumbnailURL ?? media.url)) { phase in
+            AsyncImage(url: media.displayURL) { phase in
                 switch phase {
                 case .success(let image):
                     image.resizable().scaledToFill()

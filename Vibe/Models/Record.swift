@@ -44,6 +44,23 @@ struct MediaItem: Codable, Identifiable, Hashable {
         case thumbnailURL = "thumbnail_url"
         case fileSize = "file_size"
     }
+
+    // 空字符串 thumbnail 不可用，需要 fallback 到原图或七牛参数
+    var displayURL: URL? {
+        let thumb = thumbnailURL ?? ""
+        if !thumb.isEmpty {
+            return URL(string: thumb)
+        }
+        // 视频：用七牛 vframe 生成封面
+        if type == "video" {
+            return URL(string: url + "?vframe/jpg/offset/1")
+        }
+        // 图片：用七牛缩略图
+        if type == "image" {
+            return URL(string: url + "?imageView2/2/w/800")
+        }
+        return URL(string: url)
+    }
 }
 
 struct LinkInfo: Codable, Hashable {
