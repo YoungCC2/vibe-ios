@@ -12,7 +12,7 @@ struct HomeView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 16) {
+            LazyVStack(spacing: 24) {
                 if vm.records.isEmpty && !vm.isLoading {
                     EmptyStateView()
                         .padding(.top, 80)
@@ -33,6 +33,7 @@ struct HomeView: View {
                         .padding(.vertical, 24)
                 }
             }
+            .padding(.horizontal, 20)
             .padding(.top, 8)
             .padding(.bottom, 140)
         }
