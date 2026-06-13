@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  Vibe
 //
-//  根视图 — 底部 3 Tab + HeaderBar + 浮动发布键 + QuickPostMenu
+//  根视图 — 底部 3 Tab + HeaderBar + 浮动发布键
 //
 
 import SwiftUI
@@ -10,8 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @State private var selectedTab: Tab = .home
     @State private var showSearch = false
-    @State private var showQuickMenu = false
-    @State private var quickMenuType: RecordType?
     @State private var showCreate = false
     let authService: AuthService
 
@@ -46,9 +44,9 @@ struct ContentView: View {
                         }
                     }
 
-                    // 浮动发布按钮（设计稿：白色圆角 + 加号）
+                    // 浮动发布按钮（设计稿：白色圆形 + 加号）
                     Button {
-                        showQuickMenu = true
+                        showCreate = true
                     } label: {
                         Image(systemName: "plus")
                             .font(.system(size: 28, weight: .bold))
@@ -96,21 +94,12 @@ struct ContentView: View {
                 .shadow(color: .black.opacity(0.3), radius: 16, y: -4)
             }
         }
-        // QuickPostMenu 遮罩
-        .overlay {
-            QuickPostMenu(isPresented: $showQuickMenu, selectedType: $quickMenuType)
-        }
-        .onChange(of: quickMenuType) { _, type in
-            if type != nil {
-                showCreate = true
-            }
-        }
         .sheet(isPresented: $showSearch) {
             SearchView()
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showCreate) {
-            CreateRecordView(initialType: quickMenuType ?? .text)
+            CreateRecordView()
                 .presentationDragIndicator(.visible)
         }
     }
@@ -120,7 +109,7 @@ struct ContentView: View {
         case .home:
             return selectedTab == .home ? "house.fill" : "house"
         case .discover:
-            return selectedTab == .discover ? "compass.fill" : "compass"
+            return selectedTab == .discover ? "safari.fill" : "safari"
         case .profile:
             return selectedTab == .profile ? "person.fill" : "person"
         }
