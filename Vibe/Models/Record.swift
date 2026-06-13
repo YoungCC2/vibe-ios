@@ -38,6 +38,12 @@ struct MediaItem: Codable, Identifiable, Hashable {
     var height: Int?
     let fileSize: Int64
     var duration: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case id, type, url, width, height, duration
+        case thumbnailURL = "thumbnail_url"
+        case fileSize = "file_size"
+    }
 }
 
 struct LinkInfo: Codable, Hashable {
