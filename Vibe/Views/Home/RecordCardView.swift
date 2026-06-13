@@ -2,7 +2,8 @@
 //  RecordCardView.swift
 //  Vibe
 //
-//  时间线记录卡片 — 私人日记版，保留设计稿视觉风格
+//  内容卡片 — 基于设计稿 ContentCard (00.md / 02.md)
+//  私人日记版：去掉社交元素，保留视觉结构
 //
 
 import SwiftUI
@@ -13,26 +14,31 @@ struct RecordCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // 卡片头部：类型标签 + 时间
+            // 头部：类型标签（右对齐，设计稿位置）
             HStack {
-                typeBadge
-                Spacer()
+                // 日期/时间（替代设计稿左侧的用户信息）
                 Text(record.formattedDate)
-                    .font(.vibeCaptionTiny)
-                    .foregroundColor(.vibeTextTertiary)
+                    .font(.system(size: 11))
+                    .foregroundColor(.vibeTextSecondary)
+
+                Spacer()
+
+                // 类型标签（设计稿右上角）
+                typeBadge
             }
 
-            // 文字内容
+            // 文字内容（设计稿：text-sm text-white/90 font-medium leading-relaxed）
             if !record.content.isEmpty {
                 Text(record.content)
-                    .font(.vibeBody)
-                    .foregroundColor(.vibeTextPrimary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Color.white.opacity(0.9))
                     .lineLimit(6)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 4)
             }
 
-            // 媒体内容（4:5 比例大图）
+            // 媒体内容
             if !record.media.isEmpty {
                 mediaContent
             }
@@ -47,32 +53,34 @@ struct RecordCardView: View {
                 FlowLayout(spacing: 8) {
                     ForEach(Array(record.tags.enumerated()), id: \.offset) { idx, tag in
                         Text("#\(tag)")
-                            .font(.vibeCaption)
-                            .foregroundColor(Color.tagColor(for: idx))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.8))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 4)
                             .background(Color.vibeTagBg)
                             .clipShape(Capsule())
                     }
                 }
+                .padding(.horizontal, 4)
+                .padding(.top, 4)
             }
         }
         .padding(20)
         .glassCard(cornerRadius: 32)
     }
 
-    // 类型标签胶囊
+    // 类型标签胶囊（设计稿：bg-white/20 rounded-full px-3 py-1）
     private var typeBadge: some View {
         HStack(spacing: 6) {
             Image(systemName: record.type.icon)
                 .font(.system(size: 11))
             Text(record.type.label.uppercased())
-                .font(.vibeCaptionTiny)
+                .font(.system(size: 10, weight: .bold))
                 .tracking(1)
         }
         .foregroundColor(.white)
         .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.vertical, 5)
         .background(Color.vibeNavBg)
         .clipShape(Capsule())
     }
@@ -82,10 +90,8 @@ struct RecordCardView: View {
         switch record.type {
         case .image:
             if record.media.count == 1 {
-                // 单图：4:5 大图
                 SingleImageView(media: record.media[0])
             } else {
-                // 多图：网格
                 ImageGalleryView(media: record.media)
             }
         case .video:
@@ -102,7 +108,7 @@ struct RecordCardView: View {
     }
 }
 
-// MARK: - 单图（4:5 比例）
+// MARK: - 单图（4:5 比例，设计稿 aspect-[4/5] rounded-[24px] shadow-2xl）
 struct SingleImageView: View {
     let media: MediaItem
     @State private var showFullscreen = false
@@ -128,15 +134,12 @@ struct SingleImageView: View {
         .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
         .onTapGesture { showFullscreen = true }
         .fullScreenCover(isPresented: $showFullscreen) {
-            FullscreenImageViewer(
-                media: [media],
-                startIndex: 0
-            )
+            FullscreenImageViewer(media: [media], startIndex: 0)
         }
     }
 }
 
-// MARK: - 多图画廊（2列网格）
+// MARK: - 多图画廊
 struct ImageGalleryView: View {
     let media: [MediaItem]
     @State private var selectedIndex: Int?
@@ -205,7 +208,7 @@ struct FullscreenImageViewer: View {
                 Spacer()
                 if media.count > 1 {
                     Text("\(currentIndex + 1) / \(media.count)")
-                        .font(.vibeBody)
+                        .font(.system(size: 14))
                         .foregroundColor(.white)
                         .padding(.bottom, 40)
                 }
@@ -216,14 +219,13 @@ struct FullscreenImageViewer: View {
     }
 }
 
-// MARK: - 视频缩略图（4:5 + 毛玻璃播放键）
+// MARK: - 视频缩略图（设计稿：aspect-[4/5] + 渐变遮罩 + 毛玻璃播放键 w-16 h-16）
 struct VideoThumbnailView: View {
     let media: MediaItem
     @State private var showPlayer = false
 
     var body: some View {
         ZStack {
-            // 4:5 比例封面
             AsyncImage(url: URL(string: media.thumbnailURL ?? media.url)) { phase in
                 switch phase {
                 case .success(let image):
@@ -240,7 +242,7 @@ struct VideoThumbnailView: View {
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
 
-            // 渐变遮罩（底部加深）
+            // 渐变遮罩（设计稿：bg-gradient-to-t from-black/40 via-transparent to-transparent）
             RoundedRectangle(cornerRadius: 24)
                 .fill(
                     LinearGradient(
@@ -250,10 +252,11 @@ struct VideoThumbnailView: View {
                     )
                 )
                 .aspectRatio(4.0/5.0, contentMode: .fit)
+                .allowsHitTesting(false)
 
-            // 毛玻璃播放按钮（设计稿风格）
+            // 毛玻璃播放键（设计稿：w-16 h-16 bg-white/30 backdrop-blur-xl rounded-full border-white/40）
             Image(systemName: "play.fill")
-                .font(.system(size: 28))
+                .font(.system(size: 30))
                 .foregroundColor(.white)
                 .frame(width: 64, height: 64)
                 .background(Color.white.opacity(0.3))
@@ -261,7 +264,7 @@ struct VideoThumbnailView: View {
                 .overlay(Circle().stroke(Color.white.opacity(0.4), lineWidth: 1))
                 .clipShape(Circle())
                 .shadow(color: .black.opacity(0.3), radius: 12, y: 4)
-                .offset(x: 2) // play 图标视觉居中偏移
+                .offset(x: 2)
         }
         .contentShape(Rectangle())
         .onTapGesture { showPlayer = true }
@@ -285,7 +288,6 @@ struct AudioPlayerBar: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            // 播放/暂停按钮
             Button {
                 togglePlay()
             } label: {
@@ -295,17 +297,12 @@ struct AudioPlayerBar: View {
             }
             .buttonStyle(ScaleButtonStyle())
 
-            // 进度信息
             VStack(alignment: .leading, spacing: 6) {
-                // 进度条
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        // 轨道
                         RoundedRectangle(cornerRadius: 2)
                             .fill(Color.white.opacity(0.2))
                             .frame(height: 4)
-
-                        // 已播放
                         RoundedRectangle(cornerRadius: 2)
                             .fill(Color.white.opacity(0.6))
                             .frame(width: duration > 0 ? geo.size.width * CGFloat(currentTime / duration) : 0, height: 4)
@@ -313,14 +310,13 @@ struct AudioPlayerBar: View {
                 }
                 .frame(height: 4)
 
-                // 时间
                 HStack {
                     Text(formatTime(currentTime))
-                        .font(.vibeCaptionTiny)
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.vibeTextTertiary)
                     Spacer()
                     Text(formatTime(duration))
-                        .font(.vibeCaptionTiny)
+                        .font(.system(size: 10, weight: .semibold))
                         .foregroundColor(.vibeTextTertiary)
                 }
             }
@@ -328,9 +324,7 @@ struct AudioPlayerBar: View {
         .padding(16)
         .background(Color.vibeInputBg)
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .onDisappear {
-            cleanup()
-        }
+        .onDisappear { cleanup() }
     }
 
     private func togglePlay() {
@@ -350,7 +344,6 @@ struct AudioPlayerBar: View {
     private func setupObserver() {
         guard let player else { return }
         duration = CMTimeGetSeconds(player.currentItem?.duration ?? .zero)
-
         timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 600), queue: .main) { time in
             currentTime = CMTimeGetSeconds(time)
             if currentTime >= duration && duration > 0 {
@@ -383,7 +376,6 @@ struct LinkCardView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // 缩略图
             if let thumb = link.thumbnailURL, let url = URL(string: thumb) {
                 AsyncImage(url: url) { image in
                     image.resizable().scaledToFill()
@@ -402,20 +394,19 @@ struct LinkCardView: View {
                     )
             }
 
-            // 文字
             VStack(alignment: .leading, spacing: 4) {
                 Text(link.title ?? "链接")
-                    .font(.vibeBody)
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
                     .lineLimit(2)
 
                 Text(link.domain ?? "")
-                    .font(.vibeCaption)
+                    .font(.system(size: 12))
                     .foregroundColor(.vibeTextTertiary)
 
                 if let desc = link.description {
                     Text(desc)
-                        .font(.vibeCaption)
+                        .font(.system(size: 12))
                         .foregroundColor(.vibeTextSecondary)
                         .lineLimit(2)
                 }
