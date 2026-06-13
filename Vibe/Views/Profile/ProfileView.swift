@@ -128,18 +128,22 @@ struct ProfileView: View {
                             LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                                 ForEach(mediaRecords.prefix(6)) { record in
                                     if let media = record.media.first {
-                                        AsyncImage(url: media.displayURL) { image in
-                                            image.resizable().scaledToFill()
-                                        } placeholder: {
-                                            Color.vibeInputBg
-                                        }
-                                        .frame(height: 140)
-                                        .clipped()
-                                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 24)
-                                                .stroke(Color.vibeCardBorder, lineWidth: 1)
-                                        )
+                                        Rectangle()
+                                            .fill(Color.vibeInputBg)
+                                            .aspectRatio(1, contentMode: .fit)
+                                            .overlay {
+                                                AsyncImage(url: media.displayURL) { image in
+                                                    image.resizable().scaledToFill()
+                                                } placeholder: {
+                                                    Color.vibeInputBg
+                                                }
+                                                .clipped()
+                                            }
+                                            .clipShape(RoundedRectangle(cornerRadius: 24))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 24)
+                                                    .stroke(Color.vibeCardBorder, lineWidth: 1)
+                                            )
                                     }
                                 }
                             }
