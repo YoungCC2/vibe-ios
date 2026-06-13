@@ -8,7 +8,6 @@
 
 import SwiftUI
 import AVKit
-import Combine
 
 struct RecordCardView: View {
     let record: Record
@@ -318,7 +317,7 @@ struct AudioPlayerBar: View {
     @State private var currentTime: Double = 0
     @State private var duration: Double = 0
     @State private var timeObserver: Any?
-    @State private var cancellables = Set<AnyCancellable>()
+    @State private var durationObserver: NSObjectProtocol?
 
     var body: some View {
         HStack(spacing: 14) {
@@ -380,24 +379,25 @@ struct AudioPlayerBar: View {
     }
 
     private func setupObserver() {
-        guard let player else { return }
-        // duration 异步加载，用通知监听
-        if let item = player.currentItem {
-            // 先尝试直接拿
+        guard let player, let item = player.currentItem else { return }
+        // 先尝试直接拿 duration
+        let d = CMTimeGetSeconds(item.duration)
+        if d > 0 && !d.isNaN { duration = d }
+        // 异步监听 duration 加载完成
+        durationObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemNewAccessLogEntry,
+            object: item,
+            queue: .main
+        ) { _ in
+            let d = CMTimeGetSeconds(item.duration)
+            if d > 0 && !d.isNaN { self.duration = d }
+        }
+        // 也可用 KVO
+        item.observe(\.duration, options: [.new]) { item, _ in
             let d = CMTimeGetSeconds(item.duration)
             if d > 0 && !d.isNaN {
-                duration = d
+                Task { @MainActor in self.duration = d }
             }
-            // 监听 item 加载完成
-            item.publisher(for: \.duration)
-                .receive(on: DispatchQueue.main)
-                .sink { time in
-                    let d = CMTimeGetSeconds(time)
-                    if d > 0 && !d.isNaN {
-                        self.duration = d
-                    }
-                }
-                .store(in: &cancellables)
         }
         timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 600), queue: .main) { time in
             currentTime = CMTimeGetSeconds(time)
@@ -412,6 +412,10 @@ struct AudioPlayerBar: View {
         if let observer = timeObserver {
             player?.removeTimeObserver(observer)
             timeObserver = nil
+        }
+        if let observer = durationObserver {
+            NotificationCenter.default.removeObserver(observer)
+            durationObserver = nil
         }
         player?.pause()
         player = nil
