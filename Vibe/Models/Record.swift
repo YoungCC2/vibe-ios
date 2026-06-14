@@ -45,21 +45,26 @@ struct MediaItem: Codable, Identifiable, Hashable {
         case fileSize = "file_size"
     }
 
-    // 空字符串 thumbnail 不可用，需要 fallback 到原图或七牛参数
+    // 空字符串 thumbnail 不可用，需要 fallback
     var displayURL: URL? {
-        let thumb = thumbnailURL ?? ""
+        let thumb = (thumbnailURL ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         if !thumb.isEmpty {
-            return URL(string: thumb)
+            return absoluteURL(thumb)
         }
-        // 视频：用七牛 vframe 生成封面
-        if type == "video" {
-            return URL(string: url + "?vframe/jpg/offset/1")
+        // 没有缩略图，直接用原图
+        return absoluteURL(url)
+    }
+
+    /// 如果 URL 是相对路径，自动拼接 API 服务器的 host
+    private func absoluteURL(_ path: String) -> URL? {
+        if path.hasPrefix("http://") || path.hasPrefix("https://") {
+            return URL(string: path)
         }
-        // 图片：用七牛缩略图
-        if type == "image" {
-            return URL(string: url + "?imageView2/2/w/800")
-        }
-        return URL(string: url)
+        // 相对路径 → 补全 host
+        let base = AppConfig.apiBaseURL                    // http://192.168.50.113:8080/api
+        let origin = base.split(separator: "/").prefix(3).joined(separator: "/")  // http://192.168.50.113:8080
+        let separator = path.hasPrefix("/") ? "" : "/"
+        return URL(string: origin + separator + path)
     }
 }
 
@@ -78,6 +83,7 @@ struct Record: Codable, Identifiable, Hashable {
     var tags: [String]
     var media: [MediaItem]
     var link: LinkInfo?
+    var locationName: String?
     let createdAt: String
     let updatedAt: String
 
@@ -97,17 +103,19 @@ struct Record: Codable, Identifiable, Hashable {
         case linkDescription = "link_description"
         case linkThumbnail = "link_thumbnail"
         case linkDomain = "link_domain"
+        case locationName = "location_name"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
 
-    init(id: UInt64, type: RecordType, content: String, tags: [String], media: [MediaItem], link: LinkInfo?, createdAt: String, updatedAt: String) {
+    init(id: UInt64, type: RecordType, content: String, tags: [String], media: [MediaItem], link: LinkInfo?, locationName: String? = nil, createdAt: String, updatedAt: String) {
         self.id = id
         self.type = type
         self.content = content
         self.tags = tags
         self.media = media
         self.link = link
+        self.locationName = locationName
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -121,6 +129,7 @@ struct Record: Codable, Identifiable, Hashable {
         media = try c.decodeIfPresent([MediaItem].self, forKey: .media) ?? []
         createdAt = try c.decode(String.self, forKey: .createdAt)
         updatedAt = try c.decode(String.self, forKey: .updatedAt)
+        locationName = try c.decodeIfPresent(String.self, forKey: .locationName)
 
         let url = try c.decodeIfPresent(String.self, forKey: .linkURL)
         if url != nil {
@@ -148,6 +157,7 @@ struct Record: Codable, Identifiable, Hashable {
         try c.encodeIfPresent(link?.description, forKey: .linkDescription)
         try c.encodeIfPresent(link?.thumbnailURL, forKey: .linkThumbnail)
         try c.encodeIfPresent(link?.domain, forKey: .linkDomain)
+        try c.encodeIfPresent(locationName, forKey: .locationName)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
     }

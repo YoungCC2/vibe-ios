@@ -9,15 +9,20 @@
 /* Begin PBXBuildFile section */
 		03C7F2D49378EB6E0D7E367C /* MiscServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B495A4FC6B9E9AE012DFA7 /* MiscServices.swift */; };
 		14CF4BD79A746249388D556C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5642ADB4EC3ABDE2D2C551E /* APIClient.swift */; };
+		1A35FE346C4407ABAA599873 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF65E3C734C889370D64C56 /* LocationService.swift */; };
 		29661747DFF923B91BC402DB /* Font+Vibe.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E5A1492ABC751E57BB04BA /* Font+Vibe.swift */; };
 		2AE94878A5A3B44E84EB1420 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448D79EF4957CEC716260521 /* SearchView.swift */; };
+		2D688B2B470D68EEDB02034D /* MediaPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD00987AEBE63CAB6EFE6D5 /* MediaPickerButton.swift */; };
 		2FFDC04C84EE68978DD2C1B5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7BC6BDEF322886D620681A /* ContentView.swift */; };
+		30014E4A2F5BE13A2AA681E2 /* VibeVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A391151EFC449E68ADE3DBE2 /* VibeVideoPlayer.swift */; };
 		306E90000784640BE70F6C42 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD3AE462CA3893DD3897D18 /* AuthService.swift */; };
 		31A55B01F785DE3EF30570C3 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569B5C9A7A23E80E5E155EB2 /* DiscoverView.swift */; };
 		357C9659FC3DE99322EAC007 /* Color+Vibe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEB7FE1E31153300F7C320C /* Color+Vibe.swift */; };
 		3ADC116F03E034F3672C67DC /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37404CDB7C4D94DD190075D2 /* HomeView.swift */; };
 		3C66235EE429FDEBDDBB9670 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F78D39A6FD75216293F309 /* APIResponse.swift */; };
+		45CB4752078E8B75E1B16BA3 /* VideoPlayerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE83B729182E94404DBDE080 /* VideoPlayerConfig.swift */; };
 		469F59D9E2C88F04D68C7D05 /* VibeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FED081FA7B0F653BE9BD94 /* VibeApp.swift */; };
+		4D7C524E1ED75FF75F40F249 /* VideoThumbnailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCAB49D671646A60C787F55C /* VideoThumbnailCard.swift */; };
 		594FF5579B916D4783F37191 /* QuickPostMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54263A4177F5876BDE2AC39 /* QuickPostMenu.swift */; };
 		6628C66A7E3BE9A6EBB0B181 /* CreateRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87164DB5B14D939A45A6CC9B /* CreateRecordView.swift */; };
 		6C20AB09FAA7D737B96D6AF5 /* View+Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23A84EBF534F8A8EDA7923B /* View+Modifiers.swift */; };
@@ -25,6 +30,7 @@
 		7F92676048332F9A5D95166F /* RecordCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7810636E9BCC1A173C871B3 /* RecordCardView.swift */; };
 		9254161493FFF2C274B53F0C /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290C713C1F11A13E9339E34F /* ProfileView.swift */; };
 		A96368BAF9F6B1836EEB04ED /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4855A65F0E95EDF0CDC2FA06 /* Tag.swift */; };
+		B6B3D7811F4451A622447D2D /* VideoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 27111CF3F4CE64AED81961D8 /* VideoKit */; };
 		C32C97A49B3ADE1B75E5190E /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9429D57ECB6C750555EFE22B /* HomeViewModel.swift */; };
 		CCE69C20AFA8C6FA16B6CA49 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9404BE08CBF5B1A178D87AB9 /* AppConfig.swift */; };
 		E764BB07E67C5777B99F5EE8 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746F27528DF457A69D3BF144 /* RecordService.swift */; };
@@ -43,6 +49,7 @@
 		535F6254E810CBCE24B21991 /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		569B5C9A7A23E80E5E155EB2 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
 		59ED1A9C6E4CEF1FC013BB00 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		6AD00987AEBE63CAB6EFE6D5 /* MediaPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickerButton.swift; sourceTree = "<group>"; };
 		6DEB7FE1E31153300F7C320C /* Color+Vibe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Vibe.swift"; sourceTree = "<group>"; };
 		746F27528DF457A69D3BF144 /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
 		87164DB5B14D939A45A6CC9B /* CreateRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRecordView.swift; sourceTree = "<group>"; };
@@ -51,16 +58,31 @@
 		9404BE08CBF5B1A178D87AB9 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		9429D57ECB6C750555EFE22B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		A1F78D39A6FD75216293F309 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
+		A391151EFC449E68ADE3DBE2 /* VibeVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeVideoPlayer.swift; sourceTree = "<group>"; };
 		A3FED081FA7B0F653BE9BD94 /* VibeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeApp.swift; sourceTree = "<group>"; };
 		B54263A4177F5876BDE2AC39 /* QuickPostMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPostMenu.swift; sourceTree = "<group>"; };
 		B85C47FAA7038BEB8242CE4C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C5642ADB4EC3ABDE2D2C551E /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D7E5A1492ABC751E57BB04BA /* Font+Vibe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Vibe.swift"; sourceTree = "<group>"; };
+		DE83B729182E94404DBDE080 /* VideoPlayerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerConfig.swift; sourceTree = "<group>"; };
 		E7810636E9BCC1A173C871B3 /* RecordCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCardView.swift; sourceTree = "<group>"; };
+		EBF65E3C734C889370D64C56 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		EC7BC6BDEF322886D620681A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		ED9C600BC90855C47D8E4CA9 /* Date+Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Format.swift"; sourceTree = "<group>"; };
 		F23A84EBF534F8A8EDA7923B /* View+Modifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Modifiers.swift"; sourceTree = "<group>"; };
+		FCAB49D671646A60C787F55C /* VideoThumbnailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoThumbnailCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9BEEF82DE59F7A8A72A17F1F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6B3D7811F4451A622447D2D /* VideoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		017BA0BC1F47E10632AC50D2 /* Models */ = {
@@ -80,6 +102,14 @@
 				A3FED081FA7B0F653BE9BD94 /* VibeApp.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		0D6E3CE98A549E2A1CC3D154 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				6AD00987AEBE63CAB6EFE6D5 /* MediaPickerButton.swift */,
+			);
+			path = Media;
 			sourceTree = "<group>";
 		};
 		0E31F53602D5BD398D6AA87D /* Home */ = {
@@ -165,6 +195,16 @@
 			path = Profile;
 			sourceTree = "<group>";
 		};
+		9B2B372C1B1300AF1EAFD427 /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				A391151EFC449E68ADE3DBE2 /* VibeVideoPlayer.swift */,
+				DE83B729182E94404DBDE080 /* VideoPlayerConfig.swift */,
+				FCAB49D671646A60C787F55C /* VideoThumbnailCard.swift */,
+			);
+			path = Video;
+			sourceTree = "<group>";
+		};
 		A3FCC124EA2A2E6EB7059A49 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +242,7 @@
 			children = (
 				C5642ADB4EC3ABDE2D2C551E /* APIClient.swift */,
 				8AD3AE462CA3893DD3897D18 /* AuthService.swift */,
+				EBF65E3C734C889370D64C56 /* LocationService.swift */,
 				09B495A4FC6B9E9AE012DFA7 /* MiscServices.swift */,
 				746F27528DF457A69D3BF144 /* RecordService.swift */,
 			);
@@ -212,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				04E15263C8BF0E9CF4925760 /* App */,
+				FA8027F4B45B0D4A64D2D3B8 /* Components */,
 				A3FCC124EA2A2E6EB7059A49 /* Config */,
 				7B3F6056624431BF400107AE /* Extensions */,
 				017BA0BC1F47E10632AC50D2 /* Models */,
@@ -231,6 +273,15 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		FA8027F4B45B0D4A64D2D3B8 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				0D6E3CE98A549E2A1CC3D154 /* Media */,
+				9B2B372C1B1300AF1EAFD427 /* Video */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -239,6 +290,7 @@
 			buildConfigurationList = 51BC96E0AAB7AE6442BF93E5 /* Build configuration list for PBXNativeTarget "Vibe" */;
 			buildPhases = (
 				70FEEED125D2D70A41ED9668 /* Sources */,
+				9BEEF82DE59F7A8A72A17F1F /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -246,6 +298,7 @@
 			);
 			name = Vibe;
 			packageProductDependencies = (
+				27111CF3F4CE64AED81961D8 /* VideoKit */,
 			);
 			productName = Vibe;
 			productReference = 8DB8DC56085482FCD2C13CA8 /* Vibe.app */;
@@ -269,6 +322,9 @@
 			);
 			mainGroup = AFAA63D61E24764442D91192;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				927CC4F98E9165D120A102C1 /* XCRemoteSwiftPackageReference "VideoKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 36C47034649B944C27853618 /* Products */;
 			projectDirPath = "";
@@ -297,7 +353,9 @@
 				F91A9838E4B634908775A28F /* HeaderBar.swift in Sources */,
 				3ADC116F03E034F3672C67DC /* HomeView.swift in Sources */,
 				C32C97A49B3ADE1B75E5190E /* HomeViewModel.swift in Sources */,
+				1A35FE346C4407ABAA599873 /* LocationService.swift in Sources */,
 				E824231109E2C4ED54F65CF7 /* LoginView.swift in Sources */,
+				2D688B2B470D68EEDB02034D /* MediaPickerButton.swift in Sources */,
 				03C7F2D49378EB6E0D7E367C /* MiscServices.swift in Sources */,
 				9254161493FFF2C274B53F0C /* ProfileView.swift in Sources */,
 				594FF5579B916D4783F37191 /* QuickPostMenu.swift in Sources */,
@@ -307,6 +365,9 @@
 				2AE94878A5A3B44E84EB1420 /* SearchView.swift in Sources */,
 				A96368BAF9F6B1836EEB04ED /* Tag.swift in Sources */,
 				469F59D9E2C88F04D68C7D05 /* VibeApp.swift in Sources */,
+				30014E4A2F5BE13A2AA681E2 /* VibeVideoPlayer.swift in Sources */,
+				45CB4752078E8B75E1B16BA3 /* VideoPlayerConfig.swift in Sources */,
+				4D7C524E1ED75FF75F40F249 /* VideoThumbnailCard.swift in Sources */,
 				6C20AB09FAA7D737B96D6AF5 /* View+Modifiers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -509,6 +570,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		927CC4F98E9165D120A102C1 /* XCRemoteSwiftPackageReference "VideoKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielsaidi/VideoKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		27111CF3F4CE64AED81961D8 /* VideoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 927CC4F98E9165D120A102C1 /* XCRemoteSwiftPackageReference "VideoKit" */;
+			productName = VideoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EED2669A86F822C1EECD2A46 /* Project object */;
 }

@@ -26,6 +26,11 @@ extension View {
     func glassCard(cornerRadius: CGFloat = 32) -> some View {
         modifier(GlassCard(cornerRadius: cornerRadius))
     }
+
+    /// 收起键盘
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
 }
 
 // 按钮弹性缩放

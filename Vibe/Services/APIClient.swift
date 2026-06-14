@@ -145,7 +145,10 @@ class APIClient {
             throw APIError.serverError(apiResp.code, apiResp.message)
         }
 
-        return apiResp.data!
+        guard let data = apiResp.data else {
+            throw APIError.serverError(apiResp.code, "上传成功但服务端未返回数据")
+        }
+        return data
     }
 }
 

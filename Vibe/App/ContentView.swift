@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var showQuickMenu = false
     @State private var quickMenuType: RecordType?
     @State private var showCreate = false
+    @State private var createRefreshTrigger = 0
     let authService: AuthService
 
     enum Tab: String, CaseIterable {
@@ -36,7 +37,7 @@ struct ContentView: View {
                     Group {
                         switch selectedTab {
                         case .home:
-                            HomeView()
+                            HomeView(refreshTrigger: createRefreshTrigger)
                         case .discover:
                             NavigationStack { DiscoverView() }
                         case .profile:
@@ -108,7 +109,10 @@ struct ContentView: View {
                 showCreate = true
             }
         }
-        .sheet(isPresented: $showCreate) {
+        .sheet(isPresented: $showCreate, onDismiss: {
+            createRefreshTrigger += 1
+            quickMenuType = nil
+        }) {
             CreateRecordView(initialType: quickMenuType ?? .text)
                 .presentationDragIndicator(.visible)
         }

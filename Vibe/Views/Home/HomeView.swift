@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var vm = HomeViewModel()
+    var refreshTrigger: Int = 0
 
     var body: some View {
         ScrollView {
@@ -37,11 +38,18 @@ struct HomeView: View {
             .padding(.top, 8)
             .padding(.bottom, 140)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .onTapGesture {
+            hideKeyboard()
+        }
         .refreshable {
             await vm.refresh()
         }
         .task {
             if vm.records.isEmpty { await vm.load() }
+        }
+        .onChange(of: refreshTrigger) { _, _ in
+            Task { await vm.refresh() }
         }
     }
 }

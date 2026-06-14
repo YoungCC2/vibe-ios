@@ -7,5 +7,7 @@
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>用于在发布动态时添加位置信息</string>
 </dict>
 </plist>

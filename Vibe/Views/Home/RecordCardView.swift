@@ -64,6 +64,18 @@ struct RecordCardView: View {
                 .padding(.horizontal, 4)
                 .padding(.top, 4)
             }
+
+            // 位置
+            if let location = record.locationName, !location.isEmpty {
+                HStack(spacing: 4) {
+                    Image(systemName: "location")
+                        .font(.system(size: 10))
+                    Text(location)
+                        .font(.system(size: 11))
+                }
+                .foregroundColor(.vibeTextTertiary)
+                .padding(.horizontal, 4)
+            }
         }
         .padding(20)
         .glassCard(cornerRadius: 32)
@@ -210,7 +222,7 @@ struct FullscreenImageViewer: View {
 
             TabView(selection: $currentIndex) {
                 ForEach(Array(media.enumerated()), id: \.element.id) { idx, m in
-                    AsyncImage(url: URL(string: m.url)) { image in
+                    AsyncImage(url: m.displayURL) { image in
                         image.resizable().scaledToFit()
                     } placeholder: {
                         Color.black
@@ -246,66 +258,12 @@ struct FullscreenImageViewer: View {
     }
 }
 
-// MARK: - 视频缩略图（设计稿：aspect-[4/5] + 渐变遮罩 + 毛玻璃播放键 w-16 h-16）
+// MARK: - 视频缩略图（委托给组件化 VideoThumbnailCard）
 struct VideoThumbnailView: View {
     let media: MediaItem
-    @State private var showPlayer = false
 
     var body: some View {
-        ZStack {
-            // 4:5 容器
-            Rectangle()
-                .fill(Color.vibeInputBg)
-                .aspectRatio(4.0/5.0, contentMode: .fit)
-                .overlay {
-                    AsyncImage(url: media.displayURL) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable().scaledToFill()
-                        case .failure:
-                            Color.vibeInputBg
-                        default:
-                            Color.vibeInputBg.overlay(ProgressView().tint(.white))
-                        }
-                    }
-                    .clipped()
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 24))
-                .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
-                .allowsHitTesting(false)
-
-            // 渐变遮罩
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [.black.opacity(0.4), .clear, .clear],
-                        startPoint: .bottom,
-                        endPoint: .top
-                    )
-                )
-                .aspectRatio(4.0/5.0, contentMode: .fit)
-                .allowsHitTesting(false)
-
-            // 毛玻璃播放键（设计稿：w-16 h-16 bg-white/30 backdrop-blur-xl rounded-full border-white/40）
-            Image(systemName: "play.fill")
-                .font(.system(size: 30))
-                .foregroundColor(.white)
-                .frame(width: 64, height: 64)
-                .background(Color.white.opacity(0.3))
-                .background(.ultraThinMaterial)
-                .overlay(Circle().stroke(Color.white.opacity(0.4), lineWidth: 1))
-                .clipShape(Circle())
-                .shadow(color: .black.opacity(0.3), radius: 12, y: 4)
-                .offset(x: 2)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture { showPlayer = true }
-        .fullScreenCover(isPresented: $showPlayer) {
-            if let url = URL(string: media.url) {
-                VideoPlayer(player: AVPlayer(url: url))
-                    .ignoresSafeArea()
-            }
-        }
+        VideoThumbnailCard(media: media)
     }
 }
 
@@ -318,6 +276,7 @@ struct AudioPlayerBar: View {
     @State private var duration: Double = 0
     @State private var timeObserver: Any?
     @State private var durationObserver: NSObjectProtocol?
+    @State private var kvoTokens: [NSKeyValueObservation] = []
 
     var body: some View {
         HStack(spacing: 14) {
@@ -392,13 +351,14 @@ struct AudioPlayerBar: View {
             let d = CMTimeGetSeconds(item.duration)
             if d > 0 && !d.isNaN { self.duration = d }
         }
-        // 也可用 KVO
-        item.observe(\.duration, options: [.new]) { item, _ in
+        // KVO 观察 duration 加载
+        let token = item.observe(\.duration, options: [.new]) { item, _ in
             let d = CMTimeGetSeconds(item.duration)
             if d > 0 && !d.isNaN {
                 Task { @MainActor in self.duration = d }
             }
         }
+        kvoTokens.append(token)
         timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: 600), queue: .main) { time in
             currentTime = CMTimeGetSeconds(time)
             if currentTime >= duration && duration > 0 {
@@ -417,6 +377,8 @@ struct AudioPlayerBar: View {
             NotificationCenter.default.removeObserver(observer)
             durationObserver = nil
         }
+        kvoTokens.forEach { $0.invalidate() }
+        kvoTokens.removeAll()
         player?.pause()
         player = nil
     }
@@ -432,6 +394,8 @@ struct AudioPlayerBar: View {
 // MARK: - 链接卡片
 struct LinkCardView: View {
     let link: LinkInfo
+
+    @State private var showSafari = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -476,5 +440,33 @@ struct LinkCardView: View {
         .padding(12)
         .background(Color.vibeInputBg)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .contentShape(Rectangle())
+        .onTapGesture {
+            showSafari = true
+        }
+        .sheet(isPresented: $showSafari) {
+            if let urlString = link.url, let url = URL(string: urlString) {
+                SafariView(url: url)
+                    .ignoresSafeArea()
+            }
+        }
     }
+}
+
+// MARK: - SFSafariViewController 包装
+import SafariServices
+
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let config = SFSafariViewController.Configuration()
+        config.barCollapsingEnabled = true
+        let controller = SFSafariViewController(url: url, configuration: config)
+        controller.preferredControlTintColor = UIColor.white
+        controller.dismissButtonStyle = .close
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }

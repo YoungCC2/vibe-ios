@@ -35,15 +35,17 @@ class RecordService {
         var link_description: String?
         var link_domain: String?
         var link_thumbnail: String?
+        var location_name: String?
     }
 
-    func create(type: RecordType, content: String, tags: [String], mediaIDs: [UInt64], link: LinkInfo?) async throws -> Record {
+    func create(type: RecordType, content: String, tags: [String], mediaIDs: [UInt64], link: LinkInfo?, locationName: String? = nil) async throws -> Record {
         var body = CreateBody(type: type.rawValue, content: content, tags: tags, media_ids: mediaIDs)
         body.link_url = link?.url
         body.link_title = link?.title
         body.link_description = link?.description
         body.link_domain = link?.domain
         body.link_thumbnail = link?.thumbnailURL
+        body.location_name = locationName
         return try await APIClient.shared.request("/records", method: "POST", body: body)
     }
 

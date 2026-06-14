@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct CreateRecordView: View {
     @State private var selectedType: RecordType
@@ -20,6 +21,17 @@ struct CreateRecordView: View {
     @State private var linkPreview: LinkPreviewResult?
     @State private var isLoadingPreview = false
     @State private var isPublishing = false
+
+    // 媒体选择 & 上传状态
+    @State private var pickedMedia: [PickedMedia] = []
+    @State private var uploadedIDs: [UInt64] = []
+    @State private var uploadProgress: [UUID: Double] = [:]
+    @State private var mediaIDMap: [UUID: UInt64] = [:]
+
+    // 位置
+    @State private var locationName: String?
+    @State private var isLocating = false
+    @StateObject private var locationService = LocationService.shared
 
     @Environment(\.dismiss) var dismiss
 
@@ -122,46 +134,57 @@ struct CreateRecordView: View {
                             Button {
                                 Task { await publish() }
                             } label: {
-                                HStack(spacing: 8) {
+                                HStack(spacing: 6) {
                                     Text("发布动态")
-                                        .font(.custom("PlusJakartaSans-ExtraBold", size: 18))
+                                        .font(.custom("PlusJakartaSans-ExtraBold", size: 14))
                                     Image(systemName: "paperplane.fill")
-                                        .font(.system(size: 18))
+                                        .font(.system(size: 13))
                                 }
                                 .foregroundColor(.vibeIndigo)
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 64)
+                                .frame(height: 44)
                                 .background(Color.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 24))
-                                .shadow(color: .white.opacity(0.3), radius: 10, y: 5)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .shadow(color: .white.opacity(0.3), radius: 6, y: 3)
                             }
                             .buttonStyle(ScaleButtonStyle(scale: 0.97))
                             .disabled(isPublishing)
 
-                            // 底部选项（设计稿：添加位置 + 谁可以看）
+                            // 底部选项
                             HStack(spacing: 24) {
                                 Button {
-                                    // TODO: 位置
+                                    Task {
+                                        isLocating = true
+                                        let name = await locationService.requestLocationName()
+                                        locationName = name
+                                        isLocating = false
+                                    }
                                 } label: {
                                     HStack(spacing: 6) {
-                                        Image(systemName: "location.fill")
-                                            .font(.system(size: 16))
-                                        Text("添加位置")
+                                        if isLocating {
+                                            ProgressView()
+                                                .scaleEffect(0.7)
+                                                .frame(width: 16, height: 16)
+                                        } else {
+                                            Image(systemName: locationName != nil ? "location.fill" : "location")
+                                                .font(.system(size: 16))
+                                        }
+                                        Text(locationName ?? "添加位置")
                                             .font(.vibeCaption)
+                                            .lineLimit(1)
                                     }
                                     .foregroundColor(.vibeTextSecondary)
                                 }
 
-                                Button {
-                                    // TODO: 可见性
-                                } label: {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "person.2.fill")
+                                if locationName != nil {
+                                    Button {
+                                        locationName = nil
+                                        locationService.clearLocation()
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
                                             .font(.system(size: 16))
-                                        Text("仅自己可见")
-                                            .font(.vibeCaption)
+                                            .foregroundColor(.vibeTextTertiary)
                                     }
-                                    .foregroundColor(.vibeTextSecondary)
                                 }
                             }
                         }
@@ -171,6 +194,10 @@ struct CreateRecordView: View {
                 }
             }
         }
+        .onTapGesture {
+            hideKeyboard()
+        }
+        .scrollDismissesKeyboard(.interactively)
     }
 
     // 标签输入区
@@ -266,31 +293,109 @@ struct CreateRecordView: View {
 
     // 媒体上传区
     private var mediaUploadSection: some View {
-        VStack(spacing: 12) {
-            // 图标在圆角方块内（设计稿：w-16 h-16 bg-white/10 rounded-3xl）
-            Image(systemName: "cloud.upload.fill")
-                .font(.system(size: 28))
-                .foregroundColor(Color.white.opacity(0.8))
-                .frame(width: 64, height: 64)
-                .background(Color.vibeInputBg)
-                .clipShape(RoundedRectangle(cornerRadius: 24))
+        VStack(spacing: 16) {
+            // 已选择的媒体预览
+            if !pickedMedia.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(pickedMedia) { media in
+                            mediaPreviewCell(media)
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+            }
 
-            Text("上传媒体文件")
-                .font(.vibeBody)
-                .foregroundColor(.white)
+            // 上传按钮（或重新选择）
+            MediaPickerButton(type: selectedType) { picked in
+                handlePickedMedia(picked)
+            } label: {
+                VStack(spacing: 12) {
+                    Image(systemName: "cloud.upload.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(Color.white.opacity(0.8))
+                        .frame(width: 64, height: 64)
+                        .background(Color.vibeInputBg)
+                        .clipShape(RoundedRectangle(cornerRadius: 24))
 
-            Text(supportedFormatHint)
-                .font(.vibeCaption)
-                .foregroundColor(.vibeTextTertiary)
+                    Text(pickedMedia.isEmpty ? "上传媒体文件" : "继续添加")
+                        .font(.vibeBody)
+                        .foregroundColor(.white)
+
+                    Text(supportedFormatHint)
+                        .font(.vibeCaption)
+                        .foregroundColor(.vibeTextTertiary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(32)
+                .background(
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color.white.opacity(0.05))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 32)
+                        .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [8]))
+                        .foregroundColor(Color.white.opacity(0.3))
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
         }
-        .frame(maxWidth: .infinity)
-        .padding(32)
-        .glassCard(cornerRadius: 32)
-        .overlay(
-            RoundedRectangle(cornerRadius: 32)
-                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [8]))
-                .foregroundColor(Color.white.opacity(0.3))
-        )
+    }
+
+    // 单个媒体预览格
+    private func mediaPreviewCell(_ media: PickedMedia) -> some View {
+        let progress = uploadProgress[media.id] ?? 0
+        let isDone = progress >= 1.0
+
+        return ZStack(alignment: .topTrailing) {
+            // 缩略图或占位
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.vibeInputBg)
+                .frame(width: 100, height: 100)
+                .overlay {
+                    if let thumb = media.thumbnailImage {
+                        Image(uiImage: thumb)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                    } else {
+                        // 音频或加载中
+                        Image(systemName: media.type == .audio ? "waveform" : "doc.fill")
+                            .font(.system(size: 28))
+                            .foregroundColor(.vibeTextTertiary)
+                    }
+                }
+
+            // 上传状态遮罩
+            if !isDone {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.black.opacity(0.5))
+                    .frame(width: 100, height: 100)
+                    .overlay {
+                        VStack(spacing: 6) {
+                            ProgressView(value: progress)
+                                .tint(.white)
+                                .frame(width: 60)
+                            Text("上传中")
+                                .font(.system(size: 10))
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                    }
+            }
+
+            // 删除按钮
+            Button {
+                removeMedia(media.id)
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(.white)
+                    .background(Circle().fill(Color.black.opacity(0.3)))
+            }
+            .padding(6)
+        }
+        .frame(width: 100, height: 100)
     }
 
     private var supportedFormatHint: String {
@@ -299,6 +404,48 @@ struct CreateRecordView: View {
         case .video: return "支持视频 (MP4/MOV)"
         case .audio: return "支持音频 (MP3/M4A/AAC)"
         default: return ""
+        }
+    }
+
+    // MARK: - 媒体选择 & 上传
+
+    private func handlePickedMedia(_ picked: PickedMedia) {
+        pickedMedia.append(picked)
+        uploadProgress[picked.id] = 0.0
+
+        Task {
+            do {
+                // 模拟进度更新（实际上传是单次请求，这里给一个乐观进度）
+                await MainActor.run {
+                    uploadProgress[picked.id] = 0.3
+                }
+
+                let result = try await UploadService.shared.upload(
+                    data: picked.data,
+                    fileName: picked.fileName,
+                    mimeType: picked.mimeType,
+                    type: picked.type.rawValue
+                )
+
+                await MainActor.run {
+                    uploadProgress[picked.id] = 1.0
+                    mediaIDMap[picked.id] = result.mediaID
+                    uploadedIDs.append(result.mediaID)
+                }
+            } catch {
+                print("上传失败: \(error)")
+                await MainActor.run {
+                    uploadProgress[picked.id] = -1.0  // 标记失败
+                }
+            }
+        }
+    }
+
+    private func removeMedia(_ id: UUID) {
+        pickedMedia.removeAll { $0.id == id }
+        uploadProgress.removeValue(forKey: id)
+        if let mediaID = mediaIDMap.removeValue(forKey: id) {
+            uploadedIDs.removeAll { $0 == mediaID }
         }
     }
 
@@ -314,8 +461,9 @@ struct CreateRecordView: View {
                 type: selectedType,
                 content: content,
                 tags: tags,
-                mediaIDs: [],
-                link: link
+                mediaIDs: uploadedIDs,
+                link: link,
+                locationName: locationName
             )
             dismiss()
         } catch {
