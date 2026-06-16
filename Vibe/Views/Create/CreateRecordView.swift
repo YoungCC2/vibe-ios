@@ -136,7 +136,7 @@ struct CreateRecordView: View {
                             } label: {
                                 HStack(spacing: 6) {
                                     Text("发布动态")
-                                        .font(.custom("PlusJakartaSans-ExtraBold", size: 14))
+                                        .font(.system(size: 14, weight: .heavy, design: .rounded))
                                     Image(systemName: "paperplane.fill")
                                         .font(.system(size: 13))
                                 }
@@ -148,7 +148,7 @@ struct CreateRecordView: View {
                                 .shadow(color: .white.opacity(0.3), radius: 6, y: 3)
                             }
                             .buttonStyle(ScaleButtonStyle(scale: 0.97))
-                            .disabled(isPublishing)
+                            .disabled(isPublishing || uploadProgress.values.contains(where: { $0 < 0 }) || (uploadedIDs.count < pickedMedia.count))
 
                             // 底部选项
                             HStack(spacing: 24) {
@@ -346,6 +346,7 @@ struct CreateRecordView: View {
     private func mediaPreviewCell(_ media: PickedMedia) -> some View {
         let progress = uploadProgress[media.id] ?? 0
         let isDone = progress >= 1.0
+        let isFailed = progress < 0
 
         return ZStack(alignment: .topTrailing) {
             // 缩略图或占位
@@ -367,8 +368,8 @@ struct CreateRecordView: View {
                     }
                 }
 
-            // 上传状态遮罩
-            if !isDone {
+            // 上传中遮罩
+            if !isDone && !isFailed {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color.black.opacity(0.5))
                     .frame(width: 100, height: 100)
@@ -380,6 +381,33 @@ struct CreateRecordView: View {
                             Text("上传中")
                                 .font(.system(size: 10))
                                 .foregroundColor(.white.opacity(0.8))
+                        }
+                    }
+            }
+
+            // 上传失败遮罩 + 重试
+            if isFailed {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.red.opacity(0.6))
+                    .frame(width: 100, height: 100)
+                    .overlay {
+                        VStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                            Text("失败")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(.white)
+                            Button {
+                                retryUpload(media)
+                            } label: {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.white)
+                                    .padding(4)
+                                    .background(Color.white.opacity(0.3))
+                                    .clipShape(Circle())
+                            }
                         }
                     }
             }
@@ -446,6 +474,30 @@ struct CreateRecordView: View {
         uploadProgress.removeValue(forKey: id)
         if let mediaID = mediaIDMap.removeValue(forKey: id) {
             uploadedIDs.removeAll { $0 == mediaID }
+        }
+    }
+
+    // 重试上传
+    private func retryUpload(_ media: PickedMedia) {
+        uploadProgress[media.id] = 0.0
+        Task {
+            do {
+                await MainActor.run { uploadProgress[media.id] = 0.3 }
+                let result = try await UploadService.shared.upload(
+                    data: media.data,
+                    fileName: media.fileName,
+                    mimeType: media.mimeType,
+                    type: media.type.rawValue
+                )
+                await MainActor.run {
+                    uploadProgress[media.id] = 1.0
+                    mediaIDMap[media.id] = result.mediaID
+                    uploadedIDs.append(result.mediaID)
+                }
+            } catch {
+                print("重试上传失败: \(error)")
+                await MainActor.run { uploadProgress[media.id] = -1.0 }
+            }
         }
     }
 

@@ -28,7 +28,7 @@ struct HeaderBar: View {
                     .rotationEffect(.degrees(-3))
 
                 Text("Vibe")
-                    .font(.custom("PlusJakartaSans-ExtraBold", size: 24))
+                    .font(.system(size: 24, weight: .heavy, design: .rounded))
                     .italic()
                     .foregroundColor(.white)
             }

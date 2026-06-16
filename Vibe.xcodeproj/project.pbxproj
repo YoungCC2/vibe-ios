@@ -30,7 +30,6 @@
 		7F92676048332F9A5D95166F /* RecordCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7810636E9BCC1A173C871B3 /* RecordCardView.swift */; };
 		9254161493FFF2C274B53F0C /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290C713C1F11A13E9339E34F /* ProfileView.swift */; };
 		A96368BAF9F6B1836EEB04ED /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4855A65F0E95EDF0CDC2FA06 /* Tag.swift */; };
-		B6B3D7811F4451A622447D2D /* VideoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 27111CF3F4CE64AED81961D8 /* VideoKit */; };
 		C32C97A49B3ADE1B75E5190E /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9429D57ECB6C750555EFE22B /* HomeViewModel.swift */; };
 		CCE69C20AFA8C6FA16B6CA49 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9404BE08CBF5B1A178D87AB9 /* AppConfig.swift */; };
 		E764BB07E67C5777B99F5EE8 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746F27528DF457A69D3BF144 /* RecordService.swift */; };
@@ -74,17 +73,6 @@
 		F35C95A615B136996E898064 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		FCAB49D671646A60C787F55C /* VideoThumbnailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoThumbnailCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		9BEEF82DE59F7A8A72A17F1F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B6B3D7811F4451A622447D2D /* VideoKit in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		017BA0BC1F47E10632AC50D2 /* Models */ = {
@@ -293,7 +281,6 @@
 			buildConfigurationList = 51BC96E0AAB7AE6442BF93E5 /* Build configuration list for PBXNativeTarget "Vibe" */;
 			buildPhases = (
 				70FEEED125D2D70A41ED9668 /* Sources */,
-				9BEEF82DE59F7A8A72A17F1F /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -301,7 +288,6 @@
 			);
 			name = Vibe;
 			packageProductDependencies = (
-				27111CF3F4CE64AED81961D8 /* VideoKit */,
 			);
 			productName = Vibe;
 			productReference = 8DB8DC56085482FCD2C13CA8 /* Vibe.app */;
@@ -327,9 +313,6 @@
 			);
 			mainGroup = AFAA63D61E24764442D91192;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				927CC4F98E9165D120A102C1 /* XCRemoteSwiftPackageReference "VideoKit" */,
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 36C47034649B944C27853618 /* Products */;
 			projectDirPath = "";
@@ -574,25 +557,6 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		927CC4F98E9165D120A102C1 /* XCRemoteSwiftPackageReference "VideoKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/danielsaidi/VideoKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		27111CF3F4CE64AED81961D8 /* VideoKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 927CC4F98E9165D120A102C1 /* XCRemoteSwiftPackageReference "VideoKit" */;
-			productName = VideoKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EED2669A86F822C1EECD2A46 /* Project object */;
 }

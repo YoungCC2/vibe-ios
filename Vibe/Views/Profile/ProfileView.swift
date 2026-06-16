@@ -200,7 +200,7 @@ struct ProfileView: View {
     private func statBlock(value: String, label: String) -> some View {
         VStack(spacing: 4) {
             Text(value)
-                .font(.custom("PlusJakartaSans-Bold", size: 20))
+                .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
             Text(label)
                 .font(.vibeCaptionTiny)

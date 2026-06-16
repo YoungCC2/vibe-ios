@@ -2,83 +2,68 @@
 //  VibeVideoPlayer.swift
 //  Vibe
 //
-//  统一视频播放组件入口 — 基于当前实现（VideoKit）
-//  外部只需调用 VibeVideoPlayer，不需要关心底层用什么库
-//  以后换播放器实现时，只改这个文件内部的 body
+//  统一视频播放组件 — 直接基于 AVKit
+//  外部只需调用 VibeVideoPlayer，不需要关心底层实现
 //
 
 import SwiftUI
-import VideoKit
+import AVKit
 
 /// Vibe 统一视频播放器
 /// 用法：
 ///   VibeVideoPlayer(url: videoURL, config: .feed)
-///   VibeVideoPlayer(media: mediaItem, config: .fullscreen)
-struct VibeVideoPlayer: View {
+///   VibeVideoPlayer(url: videoURL, config: .fullscreen)
+struct VibeVideoPlayer: UIViewControllerRepresentable {
     let url: URL
     var config: VideoPlayerConfig = .feed
 
-    @State private var videoTime: TimeInterval = 0
+    func makeUIViewController(context: Context) -> AVPlayerViewController {
+        let controller = AVPlayerViewController()
+        let player = AVPlayer(url: url)
 
-    var body: some View {
-        // === 底层实现：VideoKit ===
-        // 以后要换播放器？只改这个 body 里的实现就行
-        VideoKitVideoLayer(
-            url: url,
-            config: config,
-            videoTime: $videoTime
-        )
-        .modifier(VideoContainerModifier(config: config))
-    }
-}
+        // 应用配置
+        player.isMuted = config.muted
 
-// MARK: - VideoKit 底层封装（私有）
+        controller.player = player
+        controller.showsPlaybackControls = config.showsControls
+        controller.modalPresentationStyle = .fullScreen
 
-/// VideoKit 具体实现层 — 外部不应直接使用
-private struct VideoKitVideoLayer: View {
-    let url: URL
-    let config: VideoPlayerConfig
-    @Binding var videoTime: TimeInterval
-
-    var body: some View {
-        VideoKit.VideoPlayer(
-            videoURL: url,
-            time: $videoTime,
-            configuration: .init(autoPlay: config.autoPlay),
-            controllerConfiguration: { controller in
-                controller.showsPlaybackControls = config.showsControls
-            },
-            didPlayToEndAction: {
-                // 循环播放：seek 回开头
-                if config.loopPlayback {
-                    NotificationCenter.default.post(
-                        name: .AVPlayerItemDidPlayToEndTime,
-                        object: nil
-                    )
-                }
-            }
-        )
-        .ignoresSafeArea()
-    }
-}
-
-// MARK: - 容器样式修饰器
-
-/// 统一的容器样式：圆角 + 裁剪 + 阴影
-struct VideoContainerModifier: ViewModifier {
-    let config: VideoPlayerConfig
-
-    func body(content: Content) -> some View {
-        let shaped = Group {
-            if let ratio = config.aspectRatio {
-                content.aspectRatio(ratio, contentMode: .fit)
-            } else {
-                content
+        // 循环播放：监听播放结束 → seek 回开头
+        if config.loopPlayback {
+            context.coordinator.loopPlayer = player
+            context.coordinator.observer = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: player.currentItem,
+                queue: .main
+            ) { [weak player] _ in
+                player?.seek(to: .zero)
+                player?.play()
             }
         }
 
-        return shaped
-            .clipShape(RoundedRectangle(cornerRadius: config.cornerRadius))
-            .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
+        if config.autoPlay {
+            player.play()
+        }
+
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    static func dismantleUIViewController(_ uiViewController: AVPlayerViewController, coordinator: Coordinator) {
+        if let observer = coordinator.observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        coordinator.loopPlayer?.pause()
+        coordinator.loopPlayer = nil
+    }
+
+    final class Coordinator {
+        weak var loopPlayer: AVPlayer?
+        var observer: NSObjectProtocol?
     }
 }

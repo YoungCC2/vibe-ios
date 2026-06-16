@@ -2,8 +2,7 @@
 //  VideoPlayerConfig.swift
 //  Vibe
 //
-//  视频播放器统一配置 — 所有视频组件共用这份配置
-//  方便以后切换底层播放器时只改一处
+//  视频播放器统一配置 — 所有视频组件共用
 //
 
 import SwiftUI

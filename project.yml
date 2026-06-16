@@ -15,18 +15,12 @@ settings:
     INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait"
     INFOPLIST_KEY_CFBundleDisplayName: Vibe
     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-packages:
-  VideoKit:
-    url: https://github.com/danielsaidi/VideoKit.git
-    from: 0.1.0
 targets:
   Vibe:
     type: application
     platform: iOS
     sources:
       - path: Vibe
-    dependencies:
-      - package: VideoKit
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.yanghang.vibe

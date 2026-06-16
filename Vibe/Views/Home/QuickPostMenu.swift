@@ -36,12 +36,13 @@ struct QuickPostMenu: View {
                         .foregroundColor(.white)
                         .padding(.bottom, 28)
 
-                    // 2×2 网格
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                        postOption(.text, label: "发布文字", icon: "text.bubble.fill", color: .vibeIndigo)
-                        postOption(.image, label: "发布图片", icon: "photo.fill", color: Color(hex: "f43f5e"))
-                        postOption(.video, label: "发布视频", icon: "play.rectangle.fill", color: Color(hex: "f59e0b"))
-                        postOption(.audio, label: "发布音频", icon: "waveform", color: .vibeCyan)
+                    // 2×3 网格（含链接）
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
+                        postOption(.text, label: "文字", icon: "text.bubble.fill", color: .vibeIndigo)
+                        postOption(.image, label: "图片", icon: "photo.fill", color: Color(hex: "f43f5e"))
+                        postOption(.video, label: "视频", icon: "play.rectangle.fill", color: Color(hex: "f59e0b"))
+                        postOption(.audio, label: "音频", icon: "waveform", color: .vibeCyan)
+                        postOption(.link, label: "链接", icon: "link", color: Color(hex: "10b981"))
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
