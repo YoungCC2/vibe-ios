@@ -9,5 +9,7 @@
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>用于在发布动态时添加位置信息</string>
+    <key>VibeAPIBaseURL</key>
+    <string>http://192.168.50.113:8080/api</string>
 </dict>
 </plist>

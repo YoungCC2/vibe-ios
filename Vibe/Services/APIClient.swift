@@ -40,11 +40,17 @@ class APIClient {
         session = URLSession(configuration: config)
     }
 
-    // MARK: - Token 管理
+    // MARK: - Token 管理（Keychain 安全存储）
     private let tokenKey = "vibe_jwt_token"
     var token: String? {
-        get { UserDefaults.standard.string(forKey: tokenKey) }
-        set { UserDefaults.standard.set(newValue, forKey: tokenKey) }
+        get { KeychainHelper.load(forKey: tokenKey) }
+        set {
+            if let newValue {
+                KeychainHelper.save(newValue, forKey: tokenKey)
+            } else {
+                KeychainHelper.delete(forKey: tokenKey)
+            }
+        }
     }
     var isLoggedIn: Bool { token != nil }
 

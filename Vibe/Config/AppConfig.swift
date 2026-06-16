@@ -6,9 +6,13 @@
 import Foundation
 
 enum AppConfig {
-    /// API base URL — 本地开发用 localhost，真机调试换成实际 IP
-    static let apiBaseURL = "http://192.168.50.113:8080/api"
-
-    /// 登录 PIN 码（开发用，正式版应从服务端验证）
-    static let devAccessCode = "vibe123"
+    /// API base URL — 从 Info.plist 读取，方便不同环境切换
+    static let apiBaseURL: String = {
+        guard let url = Bundle.main.object(forInfoDictionaryKey: "VibeAPIBaseURL") as? String,
+              !url.isEmpty else {
+            // 兜底默认值（本地开发）
+            return "http://localhost:8080/api"
+        }
+        return url
+    }()
 }

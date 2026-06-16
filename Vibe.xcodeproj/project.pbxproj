@@ -35,6 +35,7 @@
 		CCE69C20AFA8C6FA16B6CA49 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9404BE08CBF5B1A178D87AB9 /* AppConfig.swift */; };
 		E764BB07E67C5777B99F5EE8 /* RecordService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746F27528DF457A69D3BF144 /* RecordService.swift */; };
 		E824231109E2C4ED54F65CF7 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED1A9C6E4CEF1FC013BB00 /* LoginView.swift */; };
+		F58C288E0B314A244D2B853E /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35C95A615B136996E898064 /* KeychainHelper.swift */; };
 		F91A9838E4B634908775A28F /* HeaderBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2875D89F487B557F13F86935 /* HeaderBar.swift */; };
 		FBAE594CFEC5842F50C3CBF0 /* Date+Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9C600BC90855C47D8E4CA9 /* Date+Format.swift */; };
 /* End PBXBuildFile section */
@@ -54,7 +55,7 @@
 		746F27528DF457A69D3BF144 /* RecordService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordService.swift; sourceTree = "<group>"; };
 		87164DB5B14D939A45A6CC9B /* CreateRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRecordView.swift; sourceTree = "<group>"; };
 		8AD3AE462CA3893DD3897D18 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
-		8DB8DC56085482FCD2C13CA8 /* Vibe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vibe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DB8DC56085482FCD2C13CA8 /* Vibe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Vibe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9404BE08CBF5B1A178D87AB9 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		9429D57ECB6C750555EFE22B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		A1F78D39A6FD75216293F309 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
@@ -70,6 +71,7 @@
 		EC7BC6BDEF322886D620681A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		ED9C600BC90855C47D8E4CA9 /* Date+Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Format.swift"; sourceTree = "<group>"; };
 		F23A84EBF534F8A8EDA7923B /* View+Modifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Modifiers.swift"; sourceTree = "<group>"; };
+		F35C95A615B136996E898064 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		FCAB49D671646A60C787F55C /* VideoThumbnailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoThumbnailCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -242,6 +244,7 @@
 			children = (
 				C5642ADB4EC3ABDE2D2C551E /* APIClient.swift */,
 				8AD3AE462CA3893DD3897D18 /* AuthService.swift */,
+				F35C95A615B136996E898064 /* KeychainHelper.swift */,
 				EBF65E3C734C889370D64C56 /* LocationService.swift */,
 				09B495A4FC6B9E9AE012DFA7 /* MiscServices.swift */,
 				746F27528DF457A69D3BF144 /* RecordService.swift */,
@@ -312,6 +315,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 786451589CA6F2DAC0B262E7 /* Build configuration list for PBXProject "Vibe" */;
 			developmentRegion = en;
@@ -353,6 +358,7 @@
 				F91A9838E4B634908775A28F /* HeaderBar.swift in Sources */,
 				3ADC116F03E034F3672C67DC /* HomeView.swift in Sources */,
 				C32C97A49B3ADE1B75E5190E /* HomeViewModel.swift in Sources */,
+				F58C288E0B314A244D2B853E /* KeychainHelper.swift in Sources */,
 				1A35FE346C4407ABAA599873 /* LocationService.swift in Sources */,
 				E824231109E2C4ED54F65CF7 /* LoginView.swift in Sources */,
 				2D688B2B470D68EEDB02034D /* MediaPickerButton.swift in Sources */,
@@ -452,7 +458,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CH6X3MB9A2;
 				INFOPLIST_FILE = Vibe/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -535,7 +540,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CH6X3MB9A2;
 				INFOPLIST_FILE = Vibe/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -35,8 +35,8 @@ struct CreateRecordView: View {
 
     @Environment(\.dismiss) var dismiss
 
-    // 设计稿只显示4种类型（无链接）
-    private let createTypes: [RecordType] = [.text, .image, .video, .audio]
+    // 支持全部5种类型
+    private let createTypes: [RecordType] = [.text, .image, .video, .audio, .link]
     private let suggestedTags = ["灵感记录", "每日Vibe"]
 
     var body: some View {
