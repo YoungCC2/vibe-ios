@@ -9,7 +9,6 @@ import SwiftUI
 
 struct DiscoverView: View {
     @State private var tags: [Tag] = []
-    @State private var isLoading = false
 
     var body: some View {
         ScrollView {
@@ -82,13 +81,11 @@ struct DiscoverView: View {
     }
 
     private func loadTags() async {
-        isLoading = true
         do {
             tags = try await TagService.shared.list()
         } catch {
             print("标签加载失败: \(error)")
         }
-        isLoading = false
     }
 
     private func recentMonths() -> [String] {

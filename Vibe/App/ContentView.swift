@@ -37,12 +37,18 @@ struct ContentView: View {
                     Group {
                         switch selectedTab {
                         case .home:
-                            HomeView(refreshTrigger: createRefreshTrigger)
+                            NavigationStack {
+                                HomeView(refreshTrigger: createRefreshTrigger)
+                                    .toolbar(.hidden, for: .navigationBar)
+                            }
                         case .discover:
                             NavigationStack { DiscoverView() }
                         case .profile:
-                            ScrollView {
-                                ProfileView(authService: authService)
+                            NavigationStack {
+                                ScrollView {
+                                    ProfileView(authService: authService)
+                                }
+                                .toolbar(.hidden, for: .navigationBar)
                             }
                         }
                     }

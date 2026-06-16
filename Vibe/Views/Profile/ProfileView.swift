@@ -10,6 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     @State private var stats: StatsResponse?
     @State private var recentRecords: [Record] = []
+    @State private var toast: ToastConfig?
     let authService: AuthService
 
     var body: some View {
@@ -58,8 +59,8 @@ struct ProfileView: View {
                                 .foregroundColor(.vibeIndigo)
                         }
 
-                        // 名字
-                        Text("D先生")
+                        // 名字（从 JWT 解析，兜底 "Vibe 用户"）
+                        Text(userName)
                             .font(.vibeTitle)
                             .foregroundColor(.white)
 
@@ -194,6 +195,16 @@ struct ProfileView: View {
         .task {
             await loadData()
         }
+        .toast($toast)
+    }
+
+    private var userName: String {
+        if let token = APIClient.shared.token,
+           let payload = JWTDecoder.payload(from: token),
+           let name = payload["username"] as? String ?? payload["name"] as? String {
+            return name
+        }
+        return "Vibe 用户"
     }
 
     // 统计数字块
@@ -247,14 +258,14 @@ struct ProfileView: View {
         do {
             stats = try await StatsService.shared.get()
         } catch {
-            print("统计加载失败: \(error)")
+            toast = ToastConfig(message: "统计加载失败")
         }
         // 加载最近记录用于媒体墙
         do {
             let (records, _) = try await RecordService.shared.list(page: 1, pageSize: 20)
             recentRecords = records
         } catch {
-            print("记录加载失败: \(error)")
+            toast = ToastConfig(message: "记录加载失败")
         }
     }
 }

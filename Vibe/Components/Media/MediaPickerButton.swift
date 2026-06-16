@@ -95,7 +95,10 @@ struct MediaPickerButton<Label: View>: View {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-            url.startAccessingSecurityScopedResource()
+            guard url.startAccessingSecurityScopedResource() else {
+                print("无法访问文件：安全域权限被拒绝")
+                return
+            }
             defer { url.stopAccessingSecurityScopedResource() }
             guard let data = try? Data(contentsOf: url) else { return }
             let fileName = url.lastPathComponent

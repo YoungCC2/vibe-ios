@@ -51,6 +51,10 @@ struct HomeView: View {
         .onChange(of: refreshTrigger) { _, _ in
             Task { await vm.refresh() }
         }
+        .toast(Binding(
+            get: { vm.errorMessage.map { ToastConfig(message: $0) } },
+            set: { if $0 == nil { vm.errorMessage = nil } }
+        ))
     }
 }
 

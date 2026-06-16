@@ -60,7 +60,26 @@ class RecordService {
     }
 
     func delete(id: UInt64) async throws {
-        let _: APIResponse<Empty> = try await APIClient.shared.request("/records/\(id)", method: "DELETE")
+        let path = "/records/\(id)"
+        guard let url = URL(string: APIClient.shared.baseURL + path) else {
+            throw APIError.invalidURL
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = "DELETE"
+        if let token = APIClient.shared.token {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        let (_, response) = try await URLSession.shared.data(for: req)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.networkError(URLError(.badServerResponse))
+        }
+        if httpResponse.statusCode == 401 {
+            APIClient.shared.token = nil
+            throw APIError.unauthorized
+        }
+        if !(200..<300).contains(httpResponse.statusCode) {
+            throw APIError.serverError(httpResponse.statusCode, "删除失败")
+        }
     }
 
     func search(q: String, tag: String? = nil, type: String? = nil, page: Int = 1) async throws -> ([Record], Int64) {

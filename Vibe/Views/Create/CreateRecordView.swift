@@ -21,6 +21,7 @@ struct CreateRecordView: View {
     @State private var linkPreview: LinkPreviewResult?
     @State private var isLoadingPreview = false
     @State private var isPublishing = false
+    @State private var publishError: String?
 
     // 媒体选择 & 上传状态
     @State private var pickedMedia: [PickedMedia] = []
@@ -149,6 +150,12 @@ struct CreateRecordView: View {
                             }
                             .buttonStyle(ScaleButtonStyle(scale: 0.97))
                             .disabled(isPublishing || uploadProgress.values.contains(where: { $0 < 0 }) || (uploadedIDs.count < pickedMedia.count))
+
+                            if let publishError {
+                                Text(publishError)
+                                    .font(.vibeCaption)
+                                    .foregroundColor(.red.opacity(0.8))
+                            }
 
                             // 底部选项
                             HStack(spacing: 24) {
@@ -517,9 +524,22 @@ struct CreateRecordView: View {
                 link: link,
                 locationName: locationName
             )
+            // 清空表单
+            content = ""
+            tags = []
+            tagInput = ""
+            linkURL = ""
+            linkPreview = nil
+            pickedMedia = []
+            uploadedIDs = []
+            uploadProgress = [:]
+            mediaIDMap = [:]
+            locationName = nil
+            locationService.clearLocation()
             dismiss()
         } catch {
             print("发布失败: \(error)")
+            publishError = error.localizedDescription
         }
         isPublishing = false
     }
@@ -536,52 +556,4 @@ struct CreateRecordView: View {
     }
 }
 
-// 简单的 FlowLayout
-struct FlowLayout: Layout {
-    var spacing: CGFloat = 8
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let maxWidth = proposal.width ?? .infinity
-        var width: CGFloat = 0
-        var height: CGFloat = 0
-        var lineWidth: CGFloat = 0
-        var lineHeight: CGFloat = 0
-
-        for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            if lineWidth + size.width > maxWidth {
-                width = max(width, lineWidth)
-                height += lineHeight + spacing
-                lineWidth = size.width
-                lineHeight = size.height
-            } else {
-                lineWidth += size.width + spacing
-                lineHeight = max(lineHeight, size.height)
-            }
-        }
-
-        width = max(width, lineWidth)
-        height += lineHeight
-
-        return CGSize(width: width, height: height)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let maxX = bounds.maxX
-        var x = bounds.minX
-        var y = bounds.minY
-        var lineHeight: CGFloat = 0
-
-        for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            if x + size.width > maxX {
-                x = bounds.minX
-                y += lineHeight + spacing
-                lineHeight = 0
-            }
-            subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            lineHeight = max(lineHeight, size.height)
-        }
-    }
-}
+// FlowLayout 已提取到 Components/Common/FlowLayout.swift

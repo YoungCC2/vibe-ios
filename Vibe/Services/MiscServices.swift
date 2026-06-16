@@ -14,7 +14,20 @@ class TagService {
     }
 
     func delete(id: UInt64) async throws {
-        let _: APIResponse<Empty> = try await APIClient.shared.request("/tags/\(id)", method: "DELETE")
+        let path = "/tags/\(id)"
+        guard let url = URL(string: APIClient.shared.baseURL + path) else {
+            throw APIError.invalidURL
+        }
+        var req = URLRequest(url: url)
+        req.httpMethod = "DELETE"
+        if let token = APIClient.shared.token {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        let (_, response) = try await URLSession.shared.data(for: req)
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.serverError(0, "删除失败")
+        }
     }
 }
 

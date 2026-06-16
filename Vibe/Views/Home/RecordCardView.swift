@@ -275,7 +275,6 @@ struct AudioPlayerBar: View {
     @State private var currentTime: Double = 0
     @State private var duration: Double = 0
     @State private var timeObserver: Any?
-    @State private var durationObserver: NSObjectProtocol?
     @State private var kvoTokens: [NSKeyValueObservation] = []
 
     var body: some View {
@@ -339,18 +338,6 @@ struct AudioPlayerBar: View {
 
     private func setupObserver() {
         guard let player, let item = player.currentItem else { return }
-        // 先尝试直接拿 duration
-        let d = CMTimeGetSeconds(item.duration)
-        if d > 0 && !d.isNaN { duration = d }
-        // 异步监听 duration 加载完成
-        durationObserver = NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemNewAccessLogEntry,
-            object: item,
-            queue: .main
-        ) { _ in
-            let d = CMTimeGetSeconds(item.duration)
-            if d > 0 && !d.isNaN { self.duration = d }
-        }
         // KVO 观察 duration 加载
         let token = item.observe(\.duration, options: [.new]) { item, _ in
             let d = CMTimeGetSeconds(item.duration)
@@ -372,10 +359,6 @@ struct AudioPlayerBar: View {
         if let observer = timeObserver {
             player?.removeTimeObserver(observer)
             timeObserver = nil
-        }
-        if let observer = durationObserver {
-            NotificationCenter.default.removeObserver(observer)
-            durationObserver = nil
         }
         kvoTokens.forEach { $0.invalidate() }
         kvoTokens.removeAll()

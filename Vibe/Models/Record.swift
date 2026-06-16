@@ -55,16 +55,20 @@ struct MediaItem: Codable, Identifiable, Hashable {
         return absoluteURL(url)
     }
 
-    /// 如果 URL 是相对路径，自动拼接 API 服务器的 host
+    /// 如果 URL 是相对路径，自动拼接 API 服务器的 origin
     private func absoluteURL(_ path: String) -> URL? {
         if path.hasPrefix("http://") || path.hasPrefix("https://") {
             return URL(string: path)
         }
-        // 相对路径 → 补全 host
-        let base = AppConfig.apiBaseURL                    // http://192.168.50.113:8080/api
-        let origin = base.split(separator: "/").prefix(3).joined(separator: "/")  // http://192.168.50.113:8080
+        // 相对路径 → 从 API base URL 提取 origin
+        guard let baseComponents = URLComponents(string: AppConfig.apiBaseURL),
+              let host = baseComponents.host,
+              let scheme = baseComponents.scheme else {
+            return URL(string: path)
+        }
+        let port = baseComponents.port.map { ":\($0)" } ?? ""
         let separator = path.hasPrefix("/") ? "" : "/"
-        return URL(string: origin + separator + path)
+        return URL(string: "\(scheme)://\(host)\(port)\(separator)\(path)")
     }
 }
 

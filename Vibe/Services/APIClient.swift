@@ -28,7 +28,7 @@ enum APIError: Error, LocalizedError {
 class APIClient {
     static let shared = APIClient()
 
-    private let baseURL: String
+    let baseURL: String
     private let session: URLSession
 
     private init() {
