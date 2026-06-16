@@ -38,6 +38,7 @@ struct HomeView: View {
             .padding(.top, 8)
             .padding(.bottom, 140)
         }
+        .background(VibeBackground())
         .scrollDismissesKeyboard(.interactively)
         .onTapGesture {
             hideKeyboard()

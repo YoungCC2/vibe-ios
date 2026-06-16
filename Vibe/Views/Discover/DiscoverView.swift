@@ -75,6 +75,7 @@ struct DiscoverView: View {
             .padding(20)
             .padding(.bottom, 120)
         }
+        .background(VibeBackground())
         .task {
             await loadTags()
         }

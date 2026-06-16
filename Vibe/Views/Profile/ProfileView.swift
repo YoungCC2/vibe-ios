@@ -192,6 +192,7 @@ struct ProfileView: View {
                 .padding(.bottom, 140)
             }
         }
+        .background(VibeBackground())
         .task {
             await loadData()
         }
