@@ -5,11 +5,11 @@
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
-        <false/>
+        <true/>
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>用于在发布动态时添加位置信息</string>
     <key>VibeAPIBaseURL</key>
-    <string>https://api.yhugo.cn/api</string>
+    <string>http://192.168.50.113:8080/api</string>
 </dict>
 </plist>

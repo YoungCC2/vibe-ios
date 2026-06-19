@@ -33,6 +33,7 @@
 		7ABE485ABD17F5CF28DBA1D1 /* AiReviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB1497CB6303E2B34BC14DA /* AiReviewService.swift */; };
 		7F92676048332F9A5D95166F /* RecordCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7810636E9BCC1A173C871B3 /* RecordCardView.swift */; };
 		84EB4A358809416212C3FE14 /* AiReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F99541C3BE8053564BAE162C /* AiReview.swift */; };
+		8A7544EDAA1E49147DAA9EAF /* VideoTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F84A8F95AD6C0D4D8E24FB /* VideoTestView.swift */; };
 		9254161493FFF2C274B53F0C /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290C713C1F11A13E9339E34F /* ProfileView.swift */; };
 		9C8C4B9787796AA751BC032A /* PersonaEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D94E239EEF7C2A37893292 /* PersonaEditView.swift */; };
 		A96368BAF9F6B1836EEB04ED /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4855A65F0E95EDF0CDC2FA06 /* Tag.swift */; };
@@ -50,6 +51,7 @@
 /* Begin PBXFileReference section */
 		09B495A4FC6B9E9AE012DFA7 /* MiscServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscServices.swift; sourceTree = "<group>"; };
 		16F1EA533033494B7F349511 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		19F84A8F95AD6C0D4D8E24FB /* VideoTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VideoTestView.swift; path = Vibe/Views/Debug/VideoTestView.swift; sourceTree = SOURCE_ROOT; };
 		2875D89F487B557F13F86935 /* HeaderBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderBar.swift; sourceTree = "<group>"; };
 		290C713C1F11A13E9339E34F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		37404CDB7C4D94DD190075D2 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				47D74E11BC90E7FB53B61BFC /* ReviewSection.swift */,
 				CCBA448C9F358E7574DA973A /* PersonaListView.swift */,
 				53D94E239EEF7C2A37893292 /* PersonaEditView.swift */,
+				19F84A8F95AD6C0D4D8E24FB /* VideoTestView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -396,6 +399,7 @@
 				1A9345EABE434F8C6CF06B8F /* ReviewSection.swift in Sources */,
 				D1F941B3915EDC9BF475B1F8 /* PersonaListView.swift in Sources */,
 				9C8C4B9787796AA751BC032A /* PersonaEditView.swift in Sources */,
+				8A7544EDAA1E49147DAA9EAF /* VideoTestView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

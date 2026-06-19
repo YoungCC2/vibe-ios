@@ -15,7 +15,7 @@ struct ReviewSection: View {
     @State private var hasLoaded = false
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
             if let review {
                 switch review.status {
                 case .pending:
@@ -29,8 +29,6 @@ struct ReviewSection: View {
                 }
             } else if isLoading {
                 ReviewLoadingView(personaName: nil)
-            } else {
-                EmptyView()
             }
         }
         .task {

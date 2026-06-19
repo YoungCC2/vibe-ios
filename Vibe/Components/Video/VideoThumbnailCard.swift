@@ -25,17 +25,41 @@ struct VideoThumbnailCard: View {
                 .fill(Color.vibeInputBg)
                 .aspectRatio(4.0 / 5.0, contentMode: .fit)
                 .overlay {
-                    AsyncImage(url: media.displayURL) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable().scaledToFill()
-                        case .failure:
-                            Color.vibeInputBg
-                        default:
-                            Color.vibeInputBg.overlay(ProgressView().tint(.white))
+                    if let displayURL = media.displayURL {
+                        AsyncImage(url: displayURL) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image.resizable().scaledToFill()
+                            case .failure:
+                                Color.vibeInputBg
+                                    .overlay(
+                                        VStack(spacing: 6) {
+                                            Image(systemName: "play.rectangle")
+                                                .font(.system(size: 32))
+                                                .foregroundColor(.white.opacity(0.4))
+                                            Text("封面加载失败")
+                                                .font(.system(size: 10))
+                                                .foregroundColor(.vibeTextTertiary)
+                                        }
+                                    )
+                            default:
+                                Color.vibeInputBg.overlay(ProgressView().tint(.white))
+                            }
                         }
+                        .clipped()
+                    } else {
+                        Color.vibeInputBg
+                            .overlay(
+                                VStack(spacing: 6) {
+                                    Image(systemName: "play.rectangle")
+                                        .font(.system(size: 32))
+                                        .foregroundColor(.white.opacity(0.4))
+                                    Text("无封面URL")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.vibeTextTertiary)
+                                }
+                            )
                     }
-                    .clipped()
                 }
                 .clipShape(RoundedRectangle(cornerRadius: feedConfig.cornerRadius))
                 .shadow(color: .black.opacity(0.3), radius: 12, y: 6)
@@ -51,6 +75,7 @@ struct VideoThumbnailCard: View {
                     )
                 )
                 .aspectRatio(4.0 / 5.0, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: feedConfig.cornerRadius))
                 .allowsHitTesting(false)
 
             // 毛玻璃播放键

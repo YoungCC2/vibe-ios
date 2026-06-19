@@ -12,6 +12,7 @@ struct ProfileView: View {
     @State private var recentRecords: [Record] = []
     @State private var toast: ToastConfig?
     @State private var showPersonaList = false
+    @State private var showVideoTest = false
     let authService: AuthService
 
     var body: some View {
@@ -169,6 +170,10 @@ struct ProfileView: View {
                             settingsRow(icon: "paintpalette.fill", label: "外观与主题", color: .vibePurple) {}
                             dividerLine
                             settingsRow(icon: "globe", label: "语言设置", color: .vibeCyan) {}
+                            dividerLine
+                            settingsRow(icon: "ladybug.fill", label: "视频调试", color: .orange) {
+                                showVideoTest = true
+                            }
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 24))
                         .glassCard(cornerRadius: 24)
@@ -204,6 +209,9 @@ struct ProfileView: View {
         .toast($toast)
         .sheet(isPresented: $showPersonaList) {
             PersonaListView()
+        }
+        .sheet(isPresented: $showVideoTest) {
+            VideoTestView()
         }
     }
 
