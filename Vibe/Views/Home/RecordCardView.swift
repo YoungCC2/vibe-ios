@@ -76,6 +76,9 @@ struct RecordCardView: View {
                 .foregroundColor(.vibeTextTertiary)
                 .padding(.horizontal, 4)
             }
+
+            // AI 评价区域
+            ReviewSection(recordID: record.id)
         }
         .padding(20)
         .glassCard(cornerRadius: 32)

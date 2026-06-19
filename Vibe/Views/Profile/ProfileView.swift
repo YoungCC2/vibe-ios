@@ -11,6 +11,7 @@ struct ProfileView: View {
     @State private var stats: StatsResponse?
     @State private var recentRecords: [Record] = []
     @State private var toast: ToastConfig?
+    @State private var showPersonaList = false
     let authService: AuthService
 
     var body: some View {
@@ -161,6 +162,10 @@ struct ProfileView: View {
                         VStack(spacing: 0) {
                             settingsRow(icon: "shield.checkered", label: "账号与安全", color: .vibeIndigo) {}
                             dividerLine
+                            settingsRow(icon: "sparkles", label: "AI 评价人设", color: .vibeAccent) {
+                                showPersonaList = true
+                            }
+                            dividerLine
                             settingsRow(icon: "paintpalette.fill", label: "外观与主题", color: .vibePurple) {}
                             dividerLine
                             settingsRow(icon: "globe", label: "语言设置", color: .vibeCyan) {}
@@ -197,6 +202,9 @@ struct ProfileView: View {
             await loadData()
         }
         .toast($toast)
+        .sheet(isPresented: $showPersonaList) {
+            PersonaListView()
+        }
     }
 
     private var userName: String {

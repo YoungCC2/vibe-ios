@@ -46,6 +46,9 @@ extension Color {
 
     // MARK: - 标签
     static let vibeTagBg = Color.white.opacity(0.1)
+
+    // MARK: - AI 评价强调色
+    static let vibeAccent = Color(hex: "a78bfa")  // 淡紫色，跟主渐变协调
     static let vibeTagColors: [Color] = [
         Color(hex: "6366f1"),
         Color(hex: "a855f7"),
