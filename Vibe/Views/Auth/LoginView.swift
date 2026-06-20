@@ -22,20 +22,7 @@ struct LoginView: View {
             VStack(spacing: 0) {
                 // Logo 区域
                 VStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.vibeCardBg)
-                        .background(.ultraThinMaterial)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.vibeCardBorder, lineWidth: 1)
-                        )
-                        .frame(width: 64, height: 64)
-                        .overlay(
-                            Image(systemName: "bolt.fill")
-                                .font(.system(size: 32))
-                                .foregroundColor(.white)
-                        )
-                        .shadow(color: .black.opacity(0.25), radius: 16, y: 8)
+                    AppLogo(size: 80)
 
                     Text("Vibe")
                         .font(.vibeTitleLarge)
